@@ -1,0 +1,9 @@
+label,mirA,mirB,module,module_display,category,module_genes_in_universe,mirA_targets_total,mirB_targets_total,union_targets_total,mirA_module_targets,mirB_module_targets,union_module_targets,overlap,coverage_A,coverage_B,coverage_union,incremental_coverage,complementarity_index
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,Neurite outgrowth & projection morphogenesis,Neurite outgrowth (on-target),on_target,520,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,Synapse formation & neuronal maturation,Synapse/maturation (on-target),on_target,442,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,Translation / ribosome (housekeeping),Translation/ribosome (housekeeping),control,245,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,RNA processing / splicing (housekeeping),RNA processing/splicing (housekeeping),control,202,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,UPR / ER stress (liability),UPR/ER stress (control),control,94,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,Apoptosis / p53 / DNA repair (liability),Apoptosis/DNA repair (control),control,376,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,EMT (alternate morphology),EMT (control),control,176,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,
+synergy,hsa-miR-124-3p,hsa-miR-34b-5p,Trafficking / cytoskeleton (non-specific morphology),Trafficking/cytoskeleton (control),control,1004,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,

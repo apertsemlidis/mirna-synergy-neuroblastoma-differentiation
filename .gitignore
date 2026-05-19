@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# miRTarBase full MTI table is 375 MB — exceeds GitHub's 100 MB hard
+# limit. Download separately from https://mirtarbase.cuhk.edu.cn/
+mirtarbase_mti.csv
+mirtarbase_v10_*.tsv
+miRTarBase_MTI.csv
+
+# Raw Incucyte data (too large for GitHub; available upon request)
+Incucyte_raw_data*/
