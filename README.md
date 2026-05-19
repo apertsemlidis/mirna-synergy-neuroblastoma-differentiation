@@ -153,14 +153,15 @@ Penalized (Firth-like) Cox estimation is used for `miR-137-3p + miR-450b-5p`, wh
 
 ## External Data (not included)
 
-| Resource | Source | Used by |
+| Resource | Source | Place at |
 |---|---|---|
-| Raw Incucyte NeuroTrack imaging | Available upon request (~152 MB) | `01_screen/screen_analysis.py` |
-| Raw IncuCyte dose-response plates | Available upon request | `02_dose_response/process_dose_response.py` |
-| GSE155945 raw miRNA + clinical data | [GSE155945](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155945) | derived CSVs ship in `04_survival/data/` |
-| miRTarBase MTI table (375 MB) | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | `compare_databases.py`; place at `03_target_analysis/external/mirtarbase_mti.csv` |
+| Raw Incucyte NeuroTrack imaging (~152 MB) | Available upon request | needed only by `01_screen/screen_analysis.py` |
+| Raw IncuCyte dose-response plates | Available upon request | needed only by `02_dose_response/process_dose_response.py` |
+| GSE155945 raw miRNA + clinical data | [GSE155945](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155945) | derived CSVs already ship in `04_survival/data/` |
+| TargetScan v7.2 (human predictions, 4.1 MB) | [targetscan.org](https://www.targetscan.org/) | `03_target_analysis/external/targetscan72_hsa.tsv` |
+| miRTarBase MTI table (375 MB) | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | `03_target_analysis/external/mirtarbase_mti.csv` (needed for `compare_databases.py` only) |
 
-TargetScan v7.2 (human predictions, 4.1 MB) ships in `03_target_analysis/external/`. The miRTarBase MTI table is too large for GitHub (375 MB exceeds the 100 MB per-file limit) — download the human subset from miRTarBase and place it at `03_target_analysis/external/mirtarbase_mti.csv` if you need to reproduce the database-comparison analysis.
+External databases (TargetScan, miRTarBase) are not redistributed here — fetch them from their canonical sources to keep licensing and provenance clean. The `03_target_analysis/external/nb_signatures/` folder, by contrast, ships the project-curated gene-set inputs derived from the cited papers (van Groningen et al., Wei et al., GO:BP).
 
 ## Requirements
 

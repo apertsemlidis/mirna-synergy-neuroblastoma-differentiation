@@ -90,10 +90,10 @@ cpy "$PAPER/scripts/target_analysis/compare_databases_v14.py"                   
 cpy "$PAPER/scripts/target_analysis/mirna_synergy_ontology_venn_v14.py"             "$REPO/03_target_analysis/ontology_venn.py"
 # Inputs
 cpy "$PAPER/mirna_pairs.csv"                                                         "$REPO/03_target_analysis/synergistic_pairs.csv"
-cpy "$PAPER/data/external/targetscan72_hsa.tsv"                                      "$REPO/03_target_analysis/external/targetscan72_hsa.tsv"
-# miRTarBase MTI table (375 MB) intentionally NOT copied — it exceeds GitHub's
-# 100 MB hard limit per file. Users download from https://mirtarbase.cuhk.edu.cn/
-# and place at 03_target_analysis/external/mirtarbase_mti.csv per the README.
+# External databases intentionally NOT copied — users download from canonical
+# sources to keep licensing/provenance clean. Both are listed in .gitignore.
+#   - TargetScan v7.2: https://www.targetscan.org/  -> 03_target_analysis/external/targetscan72_hsa.tsv
+#   - miRTarBase MTI:  https://mirtarbase.cuhk.edu.cn/ -> 03_target_analysis/external/mirtarbase_mti.csv
 cpy "$PAPER/data/external/nb_signatures"                                             "$REPO/03_target_analysis/external/nb_signatures"
 # Outputs
 cpy "$PAPER/data/target_analysis/batch_ts/pairs_summary.csv"                         "$REPO/03_target_analysis/outputs/pairs_summary.csv"

@@ -18,8 +18,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# miRTarBase full MTI table is 375 MB — exceeds GitHub's 100 MB hard
-# limit. Download separately from https://mirtarbase.cuhk.edu.cn/
+# External databases (download separately from their canonical sources;
+# we don't redistribute to keep licensing/provenance clean):
+#   - TargetScan v7.2 human predictions: https://www.targetscan.org/
+#   - miRTarBase MTI table: https://mirtarbase.cuhk.edu.cn/
+targetscan72_hsa.tsv
 mirtarbase_mti.csv
 mirtarbase_v10_*.tsv
 miRTarBase_MTI.csv
