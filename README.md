@@ -91,7 +91,7 @@ Code and processed data for:
 | Figure 6 | `figures/figure6_km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
 | Figure 7 | `figures/figure7_synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
 | Figure 8 | `figures/figure8_nb_specific.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
-| Additional file 1 | `04_survival/cox_time_split.py` | `04_survival/data/` |
+| Additional file 1 | `04_survival/cox_time_split.py` (pre-rendered copy at `figures/Additional file 1 v15.csv`) | `04_survival/data/` |
 | Additional file 2 | `figures/additional_file_2_cox_forest.py` → `04_survival/cox_forest_combined.py` | `04_survival/data/` |
 | Additional file 3 | `figures/additional_file_3_km_mycn.py` | `04_survival/data/` |
 

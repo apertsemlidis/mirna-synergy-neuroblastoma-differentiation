@@ -134,6 +134,9 @@ cpy "$PAPER/scripts/figures/nb_specific_modules_composite_v15.py"        "$REPO/
 cpy "$PAPER/scripts/figures/cox_forest_combined_v15.py"                  "$REPO/figures/additional_file_2_cox_forest.py"
 cpy "$PAPER/scripts/figures/km_mycn_stratified_composite_v15.py"         "$REPO/figures/additional_file_3_km_mycn.py"
 cpy "$PAPER/scripts/figures/figure_style.py"                             "$REPO/figures/figure_style.py"
+# Additional file 1 is a pre-rendered CSV (no composite script). Ship the
+# canonical-name copy from the project's figures/ folder.
+cpy "$PAPER/figures/Additional file 1 v15.csv"                            "$REPO/figures/Additional file 1 v15.csv"
 
 # ---------------------------------------------------------------------
 # Patch filename + path references in the populated scripts
