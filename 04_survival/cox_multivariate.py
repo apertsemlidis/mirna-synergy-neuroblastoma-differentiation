@@ -8,7 +8,9 @@ risk factors (MYCN amplification, age at diagnosis). Fits four Cox models
 per pair (univariate, +MYCN, +MYCN+age as covariate, +MYCN strata=age)
 plus PH check on the final (strata=age) model.
 
-Pairs: 124+363, 124+34b, 137+450b, 19b+34b.
+Pairs: the six dose-response pairs (Figure 7 panels A-F): 124+363, 124+34b,
+137+450b, 137+449b, 137+17, 19b+2110. (Updated 2026-06 from the earlier
+4-pair set, which included the now-deprecated 19b+34b.)
 
 Data: GSE155945 (Misiak et al., 2021) — 96 neuroblastoma tumors.
 
@@ -53,7 +55,9 @@ SHORT_PAIR_ID = {
     ("hsa-miR-124-3p", "hsa-miR-363-3p"): "124+363",
     ("hsa-miR-124-3p", "hsa-miR-34b-5p"): "124+34b",
     ("hsa-miR-137-3p", "hsa-miR-450b-5p"): "137+450b",
-    ("hsa-miR-19b-3p", "hsa-miR-34b-5p"): "19b+34b",
+    ("hsa-miR-137-3p", "hsa-miR-449b-5p"): "137+449b",
+    ("hsa-miR-137-3p", "hsa-miR-17-5p"): "137+17",
+    ("hsa-miR-19b-3p", "hsa-miR-2110"): "19b+2110",
 }
 
 
@@ -83,12 +87,14 @@ def classify_high(series, mirna):
     return (series >= series.median()).astype(int)
 
 
-# --- Key miRNA pairs matching Figure 6 panels A–D ---
+# --- Dose-response miRNA pairs matching Figure 7 panels A–F ---
 KEY_PAIRS = [
-    ["hsa-miR-124-3p", "hsa-miR-363-3p"],  # Main exemplar pair (Panel D)
-    ["hsa-miR-124-3p", "hsa-miR-34b-5p"],  # Panel A
-    ["hsa-miR-137-3p", "hsa-miR-450b-5p"],  # Panel B
-    ["hsa-miR-19b-3p", "hsa-miR-34b-5p"],  # Panel C (replaces 137+449b)
+    ["hsa-miR-124-3p", "hsa-miR-363-3p"],  # Panel A
+    ["hsa-miR-124-3p", "hsa-miR-34b-5p"],  # Panel B
+    ["hsa-miR-137-3p", "hsa-miR-450b-5p"],  # Panel C
+    ["hsa-miR-137-3p", "hsa-miR-449b-5p"],  # Panel D
+    ["hsa-miR-137-3p", "hsa-miR-17-5p"],  # Panel E
+    ["hsa-miR-19b-3p", "hsa-miR-2110"],  # Panel F
 ]
 
 
@@ -157,7 +163,7 @@ def run_univariate_km(data, mirna_pair, output_dir):
     ax.legend(frameon=False)
     fig.tight_layout()
     fig.savefig(
-        os.path.join(output_dir, f"km_3group_preview_{short_pair(mirna_pair)}_v14.png"),
+        os.path.join(output_dir, f"km_3group_preview_{short_pair(mirna_pair)}.png"),
         dpi=300,
     )
     plt.close()
@@ -298,7 +304,7 @@ def run_multivariate_cox(data, mirna_pair, output_dir):
         fig.tight_layout()
         fig.savefig(
             os.path.join(
-                output_dir, f"cox_forest_preview_{short_pair(mirna_pair)}_v14.png"
+                output_dir, f"cox_forest_preview_{short_pair(mirna_pair)}.png"
             ),
             dpi=300,
         )
@@ -332,7 +338,7 @@ def run_multivariate_cox(data, mirna_pair, output_dir):
     print(f"\n--- Summary: {pair_label} ---")
     print(summary_df.to_string(index=False))
     summary_df.to_csv(
-        os.path.join(output_dir, f"cox_summary_{short_pair(mirna_pair)}_v14.csv"),
+        os.path.join(output_dir, f"cox_summary_{short_pair(mirna_pair)}.csv"),
         index=False,
     )
 
@@ -397,7 +403,7 @@ def run_stratified_km(data, mirna_pair, output_dir):
     fig.savefig(
         os.path.join(
             output_dir,
-            f"km_mycn_stratified_preview_{short_pair(mirna_pair)}_v14.png",
+            f"km_mycn_stratified_preview_{short_pair(mirna_pair)}.png",
         ),
         dpi=300,
     )

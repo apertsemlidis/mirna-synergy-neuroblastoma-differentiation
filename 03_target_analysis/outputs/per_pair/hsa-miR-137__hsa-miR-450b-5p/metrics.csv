@@ -1,9 +1,0 @@
-label,mirA,mirB,module,module_display,category,module_genes_in_universe,mirA_targets_total,mirB_targets_total,union_targets_total,mirA_module_targets,mirB_module_targets,union_module_targets,overlap,coverage_A,coverage_B,coverage_union,incremental_coverage,complementarity_index
-synergy,hsa-miR-137,hsa-miR-450b-5p,Neurite outgrowth & projection morphogenesis,Neurite outgrowth (on-target),on_target,520,1314,0,1314,76,0,76,0,0.14615384615384616,0.0,0.14615384615384616,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,Synapse formation & neuronal maturation,Synapse/maturation (on-target),on_target,442,1314,0,1314,61,0,61,0,0.13800904977375567,0.0,0.13800904977375567,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,Translation / ribosome (housekeeping),Translation/ribosome (housekeeping),control,245,1314,0,1314,22,0,22,0,0.08979591836734693,0.0,0.08979591836734693,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,RNA processing / splicing (housekeeping),RNA processing/splicing (housekeeping),control,202,1314,0,1314,12,0,12,0,0.0594059405940594,0.0,0.0594059405940594,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,UPR / ER stress (liability),UPR/ER stress (control),control,94,1314,0,1314,9,0,9,0,0.09574468085106383,0.0,0.09574468085106383,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,Apoptosis / p53 / DNA repair (liability),Apoptosis/DNA repair (control),control,376,1314,0,1314,22,0,22,0,0.05851063829787234,0.0,0.05851063829787234,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,EMT (alternate morphology),EMT (control),control,176,1314,0,1314,15,0,15,0,0.08522727272727272,0.0,0.08522727272727272,0.0,1.0
-synergy,hsa-miR-137,hsa-miR-450b-5p,Trafficking / cytoskeleton (non-specific morphology),Trafficking/cytoskeleton (control),control,1004,1314,0,1314,89,0,89,0,0.08864541832669323,0.0,0.08864541832669323,0.0,1.0

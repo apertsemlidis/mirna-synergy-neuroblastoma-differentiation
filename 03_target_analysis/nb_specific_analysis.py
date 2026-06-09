@@ -9,6 +9,15 @@ signatures, and retinoid response genes.
 Reuses the same coverage/complementarity metrics as the generic analysis
 but loads gene sets from local files rather than Enrichr.
 
+v16 changes vs v14:
+  - Per-category Mann-Whitney U stats (medians, p-values, sample sizes)
+    written to `nb_specific_stats.csv` (Path 4 refactor — figure
+    composite consumes this rather than recomputing inline).
+  - all_pairs_nb_metrics.csv continues to be the per-pair per-module
+    incremental-coverage table.
+
+v14 archived at `scripts/archive/target_analysis_v14/nb_specific_analysis_v14.py` (frozen).
+
 Gene signatures:
   - MYCN targets: WEI_MYCN_TARGETS_WITH_E_BOX (MSigDB, Wei et al. 2008)
   - ADRN identity: van Groningen et al. 2017 Nat Genet, Table S2
@@ -364,13 +373,80 @@ def generate_summary_figure(combined: pd.DataFrame, outdir: str) -> None:
     print(f"MYCN targets:                mean = {mycn_vals.mean():.4f}, median = {mycn_vals.median():.4f}, n = {len(mycn_vals)}")
     print(f"NB undifferentiated modules: mean = {undiff_vals.mean():.4f}, median = {undiff_vals.median():.4f}, n = {len(undiff_vals)}")
 
+    stats_rows = []
+    for label, vals in [("nb_differentiation", diff_vals), ("mycn", mycn_vals), ("nb_undifferentiated", undiff_vals)]:
+        stats_rows.append({
+            "category": label,
+            "n": int(len(vals)),
+            "mean_inc_coverage": float(vals.mean()) if len(vals) else None,
+            "median_inc_coverage": float(vals.median()) if len(vals) else None,
+            "comparison": None,
+            "mannwhitney_U": None,
+            "mannwhitney_p_onesided_greater": None,
+        })
     if len(diff_vals) > 0 and len(mycn_vals) > 0:
         u, p = stats.mannwhitneyu(diff_vals, mycn_vals, alternative="greater")
         print(f"\nDifferentiation vs MYCN: U = {u:.1f}, p = {p:.4e} (one-sided)")
+        stats_rows.append({
+            "category": None, "n": None,
+            "mean_inc_coverage": None, "median_inc_coverage": None,
+            "comparison": "nb_differentiation_vs_mycn",
+            "mannwhitney_U": float(u), "mannwhitney_p_onesided_greater": float(p),
+        })
 
     if len(diff_vals) > 0 and len(undiff_vals) > 0:
         u, p = stats.mannwhitneyu(diff_vals, undiff_vals, alternative="greater")
         print(f"Differentiation vs Undifferentiated: U = {u:.1f}, p = {p:.4e} (one-sided)")
+        stats_rows.append({
+            "category": None, "n": None,
+            "mean_inc_coverage": None, "median_inc_coverage": None,
+            "comparison": "nb_differentiation_vs_nb_undifferentiated",
+            "mannwhitney_U": float(u), "mannwhitney_p_onesided_greater": float(p),
+        })
+
+    # --- v16 addition: per-module Mann-Whitney tests ---
+    # The figure-rendering composite displays brackets between specific
+    # modules (ADRN vs MYCN, ADRN vs Retinoid), not aggregated categories.
+    # Emit per-module summaries and the specific tests used on the figure.
+    print("\n--- Per-module statistics ---")
+    module_vals = {}
+    for module_name in df["module_display"].unique():
+        vals = df.loc[df["module_display"] == module_name, "incremental_coverage"].dropna()
+        module_vals[module_name] = vals
+        print(f"  {module_name:30s}  mean = {vals.mean():.4f}  median = {vals.median():.4f}  n = {len(vals)}")
+        stats_rows.append({
+            "category": None, "n": int(len(vals)),
+            "mean_inc_coverage": float(vals.mean()) if len(vals) else None,
+            "median_inc_coverage": float(vals.median()) if len(vals) else None,
+            "comparison": f"module:{module_name}",
+            "mannwhitney_U": None,
+            "mannwhitney_p_onesided_greater": None,
+        })
+
+    # The two bracket comparisons that appear on the figure:
+    bracket_comparisons = [
+        ("Adrenergic (ADRN)", "MYCN targets (Wei et al.)", "ADRN_vs_MYCN_targets"),
+        ("Adrenergic (ADRN)", "Retinoid response (GO)",   "ADRN_vs_Retinoid"),
+    ]
+    for mod_a, mod_b, key in bracket_comparisons:
+        if mod_a in module_vals and mod_b in module_vals:
+            a = module_vals[mod_a]
+            b = module_vals[mod_b]
+            if len(a) > 0 and len(b) > 0:
+                u, p = stats.mannwhitneyu(a, b, alternative="greater")
+                print(f"  {key}: U = {u:.1f}, p = {p:.4e} (one-sided ADRN > comparator)")
+                stats_rows.append({
+                    "category": None, "n": None,
+                    "mean_inc_coverage": None, "median_inc_coverage": None,
+                    "comparison": key,
+                    "mannwhitney_U": float(u),
+                    "mannwhitney_p_onesided_greater": float(p),
+                })
+
+    stats_df = pd.DataFrame(stats_rows)
+    stats_csv_path = os.path.join(outdir, "nb_specific_stats.csv")
+    stats_df.to_csv(stats_csv_path, index=False)
+    print(f"\nSaved stats: {stats_csv_path}  ({len(stats_df)} rows)")
 
 
 # --- Main ---
@@ -394,7 +470,7 @@ def main():
         in_universe = len(module_gene_sets[m["module"]] & universe)
         print(f"  {m['display']}: {m['n_genes']} genes ({in_universe} in TargetScan universe)")
 
-    print(f"\nRunning batch analysis...")
+    print("\nRunning batch analysis...")
     os.makedirs(args.outdir, exist_ok=True)
     combined = run_batch(args.pairs_csv, df_ts, TARGETSCAN_SPEC,
                           module_meta, module_gene_sets, universe, args.outdir)

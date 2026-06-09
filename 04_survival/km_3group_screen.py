@@ -6,19 +6,19 @@ miRNA pairs in `mirna_pairs.csv`.
 Per-pair output:
   - n per group (n_0 / n_1 / n_2), events in the "2 high" group
   - HR, 95% CI for `both_high` from an MYCN-adjusted, age-stratified
-    Cox model (matches Model 4 of cox_multivariate/multivariate_survival_v14.py)
+    Cox model (matches Model 4 of cox_multivariate/multivariate_survival.py)
   - log-rank p (unadjusted, 2-high vs <2-high) — for reference only
   - `penalized` flag if Firth-like (penalizer=0.1) fallback was used
 
 Framing: per-pair HR + CI reported for screening, not pair-level
 significance testing. Formal hypothesis tests are reserved for the four
-main-figure pairs (km_3group_all_v14.py).
+main-figure pairs (km_3group_all.py).
 
 Floor-effect miRNAs use the `DETECTION_CUTOFF` dict from
-`km_3group_all_v14.py`; pairs containing miRNAs absent from the
+`km_3group_all.py`; pairs containing miRNAs absent from the
 expression dataset are reported with `status="MISSING:..."` and no HR.
 
-Output: `km_3group_screen_v14.csv` (sorted by HR ascending).
+Output: `km_3group_screen.csv` (sorted by HR ascending).
 """
 
 import os
@@ -60,7 +60,7 @@ def short(m):
 
 def fit_stratified_cox(data):
     """Fit MYCN-adjusted, age-stratified Cox on `both_high` + `MYCN_amp`
-    (matches Model 4 of multivariate_survival_v14.py). Retry with penalizer=0.1
+    (matches Model 4 of multivariate_survival.py). Retry with penalizer=0.1
     on convergence failure.
     """
     for pen in (0.0, 0.1):
@@ -182,7 +182,7 @@ out = (
     .reset_index(drop=True)
 )
 
-out.to_csv("km_3group_screen_v14.csv", index=False)
+out.to_csv("km_3group_screen.csv", index=False)
 
 # ── Console summary ──────────────────────────────────────────────────────────
 print(
@@ -203,4 +203,4 @@ for _, r in out.iterrows():
         f"{r['pair']:<16} {n_str:<12} {ev_str:>4}  {hr_str:>6}{pen:<1} {ci_str:>15}  {p_str:>7}  {r['status']}"
     )
 print("\n* = penalized Cox (Firth-like, penalizer=0.1) used")
-print(f"\nSaved: km_3group_screen_v14.csv  ({len(out)} pairs)")
+print(f"\nSaved: km_3group_screen.csv  ({len(out)} pairs)")

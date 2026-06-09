@@ -7,10 +7,10 @@ MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,96,40,124,12,0.1
 Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,59,35,87,7,0.20136518771331058,0.11945392491467577,0.29692832764505117,0.09556313993174059,0.9195402298850575,hsa-miR-124-3p,hsa-miR-363-3p
 Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,125,64,159,30,0.2913752913752914,0.14918414918414918,0.3706293706293706,0.07925407925407923,0.8113207547169812,hsa-miR-124-3p,hsa-miR-363-3p
 Retinoid response,Retinoid response (GO),nb_differentiation,89,18,9,23,4,0.20224719101123595,0.10112359550561797,0.25842696629213485,0.0561797752808989,0.8260869565217391,hsa-miR-124-3p,hsa-miR-363-3p
-MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,96,0,96,0,0.16842105263157894,0.0,0.16842105263157894,0.0,1.0,hsa-miR-124-3p,hsa-miR-34b-5p
-Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,59,0,59,0,0.20136518771331058,0.0,0.20136518771331058,0.0,1.0,hsa-miR-124-3p,hsa-miR-34b-5p
-Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,125,0,125,0,0.2913752913752914,0.0,0.2913752913752914,0.0,1.0,hsa-miR-124-3p,hsa-miR-34b-5p
-Retinoid response,Retinoid response (GO),nb_differentiation,89,18,0,18,0,0.20224719101123595,0.0,0.20224719101123595,0.0,1.0,hsa-miR-124-3p,hsa-miR-34b-5p
+MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,96,31,116,11,0.16842105263157894,0.054385964912280704,0.20350877192982456,0.03508771929824561,0.9051724137931034,hsa-miR-124-3p,hsa-miR-34b-5p
+Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,59,31,80,10,0.20136518771331058,0.10580204778156997,0.27303754266211605,0.07167235494880547,0.875,hsa-miR-124-3p,hsa-miR-34b-5p
+Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,125,31,139,17,0.2913752913752914,0.07226107226107226,0.32400932400932403,0.03263403263403264,0.8776978417266187,hsa-miR-124-3p,hsa-miR-34b-5p
+Retinoid response,Retinoid response (GO),nb_differentiation,89,18,4,21,1,0.20224719101123595,0.0449438202247191,0.23595505617977527,0.033707865168539325,0.9523809523809523,hsa-miR-124-3p,hsa-miR-34b-5p
 MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,44,0,44,0,0.07719298245614035,0.0,0.07719298245614035,0.0,1.0,hsa-miR-19a-3p,hsa-miR-2110
 Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,47,0,47,0,0.16040955631399317,0.0,0.16040955631399317,0.0,1.0,hsa-miR-19a-3p,hsa-miR-2110
 Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,71,0,71,0,0.1655011655011655,0.0,0.1655011655011655,0.0,1.0,hsa-miR-19a-3p,hsa-miR-2110
@@ -27,10 +27,10 @@ MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,44,0,44,0,0.0771
 Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,47,0,47,0,0.16040955631399317,0.0,0.16040955631399317,0.0,1.0,hsa-miR-19b-3p,hsa-miR-2110
 Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,71,0,71,0,0.1655011655011655,0.0,0.1655011655011655,0.0,1.0,hsa-miR-19b-3p,hsa-miR-2110
 Retinoid response,Retinoid response (GO),nb_differentiation,89,8,0,8,0,0.0898876404494382,0.0,0.0898876404494382,0.0,1.0,hsa-miR-19b-3p,hsa-miR-2110
-MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,44,0,44,0,0.07719298245614035,0.0,0.07719298245614035,0.0,1.0,hsa-miR-19b-3p,hsa-miR-34b-5p
-Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,47,0,47,0,0.16040955631399317,0.0,0.16040955631399317,0.0,1.0,hsa-miR-19b-3p,hsa-miR-34b-5p
-Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,71,0,71,0,0.1655011655011655,0.0,0.1655011655011655,0.0,1.0,hsa-miR-19b-3p,hsa-miR-34b-5p
-Retinoid response,Retinoid response (GO),nb_differentiation,89,8,0,8,0,0.0898876404494382,0.0,0.0898876404494382,0.0,1.0,hsa-miR-19b-3p,hsa-miR-34b-5p
+MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,44,31,69,6,0.07719298245614035,0.054385964912280704,0.12105263157894737,0.043859649122807015,0.9130434782608696,hsa-miR-19b-3p,hsa-miR-34b-5p
+Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,47,31,71,7,0.16040955631399317,0.10580204778156997,0.24232081911262798,0.08191126279863481,0.9014084507042254,hsa-miR-19b-3p,hsa-miR-34b-5p
+Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,71,31,94,8,0.1655011655011655,0.07226107226107226,0.2191142191142191,0.0536130536130536,0.9148936170212766,hsa-miR-19b-3p,hsa-miR-34b-5p
+Retinoid response,Retinoid response (GO),nb_differentiation,89,8,4,12,0,0.0898876404494382,0.0449438202247191,0.1348314606741573,0.0449438202247191,1.0,hsa-miR-19b-3p,hsa-miR-34b-5p
 MYCN transcriptional targets,MYCN targets (Wei et al.),mycn,570,56,58,106,8,0.09824561403508772,0.10175438596491228,0.18596491228070175,0.08421052631578947,0.9245283018867925,hsa-miR-106b-5p,hsa-miR-137-3p
 Adrenergic identity (ADRN),Adrenergic (ADRN),nb_differentiation,293,29,43,67,5,0.09897610921501707,0.14675767918088736,0.22866894197952217,0.08191126279863481,0.9253731343283582,hsa-miR-106b-5p,hsa-miR-137-3p
 Mesenchymal identity (MES),Mesenchymal (MES),nb_undifferentiated,429,75,58,116,17,0.17482517482517482,0.1351981351981352,0.2703962703962704,0.09557109557109558,0.853448275862069,hsa-miR-106b-5p,hsa-miR-137-3p

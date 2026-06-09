@@ -16,8 +16,8 @@ split by `both_high`, many pairs will hit NO_EVENTS in the amp stratum and
 the interaction test will be underpowered. Report these as descriptive
 effect sizes, not pair-level significance tests.
 
-Framing matches km_3group_screen_v14.py: screen, not hypothesis test.
-Output: `km_mycn_stratified_screen_v14.csv` (sorted by HR_amp ascending).
+Framing matches km_3group_screen.py: screen, not hypothesis test.
+Output: `km_mycn_stratified_screen.csv` (sorted by HR_amp ascending).
 """
 
 import os
@@ -198,7 +198,7 @@ out = (
     .drop(columns=["_ok", "_hr_sort"])
     .reset_index(drop=True)
 )
-out.to_csv("km_mycn_stratified_screen_v14.csv", index=False)
+out.to_csv("km_mycn_stratified_screen.csv", index=False)
 
 # ── Console summary ──────────────────────────────────────────────────────────
 print(
@@ -229,4 +229,4 @@ print(
     "\nColumns: n_na(bh) = nonamp total (both_high); "
     "n_a(bh) = amp total (both_high). CI are 95%."
 )
-print(f"\nSaved: km_mycn_stratified_screen_v14.csv  ({len(out)} pairs)")
+print(f"\nSaved: km_mycn_stratified_screen.csv  ({len(out)} pairs)")

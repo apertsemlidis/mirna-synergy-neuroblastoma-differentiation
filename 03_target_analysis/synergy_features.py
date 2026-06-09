@@ -6,18 +6,23 @@ non-synergistic miRNA pairs (Suggestion #3).
 Compares 34 dual-positive synergistic pairs against ~912 non-synergistic
 combinations across multiple features: target overlap, individual potency,
 target set size, and expression correlation in patient tumors.
+
+v16 changes vs v14:
+  - Per-feature Mann-Whitney U stats (medians, p-values, sample sizes)
+    written to `synergy_features_stats.csv` (Path 4 refactor — figure
+    composite consumes this rather than recomputing inline).
+  - all_features.csv continues to be the per-pair raw feature table.
+
+v14 archived at `scripts/archive/target_analysis_v14/synergy_features_v14.py` (frozen).
 """
 
 import argparse
 import os
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
-from statistics import median
-import seaborn as sns
 
 
 def load_screen_data(screen_dir):
@@ -341,6 +346,33 @@ def main():
     for feat, (syn_med, nonsyn_med, p) in results.items():
         sig = "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "ns"
         print(f"  {feat:30s}  syn={syn_med:.4f}  nonsyn={nonsyn_med:.4f}  p={p:.4e}  {sig}")
+
+    # --- v16 stats CSV (Path 4 refactor) ---
+    stats_rows = []
+    feature_key_map = {
+        "Jaccard similarity":      "jaccard",
+        "Union target size":       "size_union",
+        "Size ratio":              "size_ratio",
+        "Best single NL":          "best_single_nl",
+        "Expression correlation":  "expr_corr",
+    }
+    for feat_label, (syn_med, nonsyn_med, p) in results.items():
+        feat_key = feature_key_map.get(feat_label, feat_label)
+        n_syn = int(df[df["dual_positive"] == True][feat_key].dropna().shape[0])
+        n_nonsyn = int(df[df["dual_positive"] == False][feat_key].dropna().shape[0])
+        stats_rows.append({
+            "feature": feat_label,
+            "feature_key": feat_key,
+            "n_synergistic": n_syn,
+            "n_nonsynergistic": n_nonsyn,
+            "median_synergistic": syn_med,
+            "median_nonsynergistic": nonsyn_med,
+            "mannwhitney_p": p,
+        })
+    stats_df = pd.DataFrame(stats_rows)
+    stats_csv_path = os.path.join(args.outdir, "synergy_features_stats.csv")
+    stats_df.to_csv(stats_csv_path, index=False)
+    print(f"\nSaved stats: {stats_csv_path}  ({len(stats_df)} features)")
 
     print(f"\nResults saved to {args.outdir}/")
 

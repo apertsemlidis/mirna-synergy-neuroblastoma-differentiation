@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
 """
-MYCN-stratified Kaplan-Meier survival for each of the four key miRNA pairs.
-Each pair produces a two-panel figure (MYCN non-amplified | amplified).
-Also fits the final age-stratified Cox model and reports HR per pair.
+MYCN-stratified Kaplan-Meier survival for each of the six dose-response
+pairs. Each pair produces a two-panel figure (MYCN non-amplified |
+amplified). Also fits the final age-stratified Cox model per pair.
 
-Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
+Pairs (v16 master set, all six dose-response plates):
+  124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; paths now
-    `./km_mycn_stratified_{pair}_v4.{png,svg}`. Centralized
-    `multivariate_results/` sink removed.
-  - 2026-04-21: moved from survival/figure6D_mycn_stratified_all_v4.py to
-    survival/km_mycn_stratified/km_mycn_stratified_all_v4.py per
-    .state/NAMING_PLAN_v3.md. `os.chdir(Path(__file__).parent)` added.
-  - 2026-04-17: created as v4 with median-split unification, Panel C
-    pair swap (137+449b → 19b+34b), Bonferroni ×2 on per-stratum
-    log-rank, penalized Cox fallback on complete separation, and
-    DETECTION_CUTOFF for floor-effect miRNAs. See
-    .state/ledger.md 2026-04-17 entry.
+v16 changes vs v14:
+  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
+    137+17, 19b+2110.
+  - Per-pair per-stratum log-rank + Cox HR statistics dumped to
+    `km_mycn_stratified_stats.csv` (Path 4 refactor).
+  - Per-pair output: `km_mycn_stratified_{pair}.{png,svg}` (unsuffixed).
+
+v14 archived at `survival/archive/v14_main_pairs_2026-05/km_mycn_stratified_all_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -43,11 +40,16 @@ df["age_over_18mo"] = df["over_18_months_age_of_diagnosis"].astype(int)
 
 # ── Define pairs ─────────────────────────────────────────────────────────────
 PAIRS = [
+    ("124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
     ("124+34b", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
     ("137+450b", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
-    ("19b+34b", ["hsa-miR-19b-3p", "hsa-miR-34b-5p"]),
-    ("124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("137+449b", ["hsa-miR-137-3p", "hsa-miR-449b-5p"]),
+    ("137+17", ["hsa-miR-137-3p", "hsa-miR-17-5p"]),
+    ("19b+2110", ["hsa-miR-19b-3p", "hsa-miR-2110"]),
 ]
+
+# Per-pair per-stratum log-rank + Cox HR stats — written at script end.
+STATS_ROWS = []
 
 TIME_POINTS = [0, 1000, 2000, 3000, 4000, 5000]
 COLORS = {"not_both_high": "#0072B2", "both_high": "#D55E00"}
@@ -125,10 +127,46 @@ for pair_label, mirna_pair in PAIRS:
             f"  Cox HR (both_high): {hr:.2f} ({lo:.2f}-{hi:.2f}), p={pv:.4f}{pen_log}"
         )
         cph.print_summary()
+        STATS_ROWS.append(
+            {
+                "pair": pair_label,
+                "stratum": "cox_overall",
+                "n_not_both": int((df["both_high"] == 0).sum()),
+                "n_both": int(n_both_high),
+                "events_not_both": int(df[df["both_high"] == 0]["event"].sum()),
+                "events_both": int(n_events_both_high),
+                "cox_HR": float(hr),
+                "cox_CI_lo": float(lo),
+                "cox_CI_hi": float(hi),
+                "cox_p": float(pv),
+                "penalized": bool(penalizer > 0),
+                "logrank_p_raw": None,
+                "logrank_p_bonferroni": None,
+                "status": "OK",
+            }
+        )
     except Exception as e:
         print(f"  Cox model failed: {e}")
         cox_hr_text = "Cox: model failed"
         cox_p_text = ""
+        STATS_ROWS.append(
+            {
+                "pair": pair_label,
+                "stratum": "cox_overall",
+                "n_not_both": int((df["both_high"] == 0).sum()),
+                "n_both": int(n_both_high),
+                "events_not_both": int(df[df["both_high"] == 0]["event"].sum()),
+                "events_both": int(n_events_both_high),
+                "cox_HR": None,
+                "cox_CI_lo": None,
+                "cox_CI_hi": None,
+                "cox_p": None,
+                "penalized": None,
+                "logrank_p_raw": None,
+                "logrank_p_bonferroni": None,
+                "status": f"FAILED:{type(e).__name__}",
+            }
+        )
 
     # ── MYCN-stratified KM (compact layout) ─────────────────────────────────
     fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
@@ -148,8 +186,27 @@ for pair_label, mirna_pair in PAIRS:
         kmf0 = KaplanMeierFitter()
         kmf1 = KaplanMeierFitter()
 
+        # Per-stratum stats row — populated below depending on group sizes.
+        stratum_row = {
+            "pair": pair_label,
+            "stratum": "non_amp" if mycn_val == 0 else "amp",
+            "n_not_both": int(n0),
+            "n_both": int(n1),
+            "events_not_both": int(grp0["event"].sum()),
+            "events_both": int(grp1["event"].sum()),
+            "cox_HR": None,
+            "cox_CI_lo": None,
+            "cox_CI_hi": None,
+            "cox_p": None,
+            "penalized": None,
+            "logrank_p_raw": None,
+            "logrank_p_bonferroni": None,
+            "status": "OK",
+        }
+
         # Handle edge case: empty group
         if n1 == 0:
+            stratum_row["status"] = "EMPTY:both_high"
             kmf0.fit(
                 grp0["survival_time"], grp0["event"], label=f"Not both high (n={n0})"
             )
@@ -172,6 +229,7 @@ for pair_label, mirna_pair in PAIRS:
                 ),
             )
         elif n0 == 0:
+            stratum_row["status"] = "EMPTY:not_both_high"
             kmf1.fit(grp1["survival_time"], grp1["event"], label=f"Both high (n={n1})")
             kmf1.plot_survival_function(
                 ax=ax, color=COLORS["both_high"], linewidth=2, ci_show=False
@@ -221,6 +279,10 @@ for pair_label, mirna_pair in PAIRS:
                 f"log-rank raw p={pval_raw:.4f}, "
                 f"Bonferroni-adj p={pval_adj:.4f}"
             )
+            stratum_row["logrank_p_raw"] = float(pval_raw)
+            stratum_row["logrank_p_bonferroni"] = float(pval_adj)
+
+        STATS_ROWS.append(stratum_row)
 
         ax.set_title(mycn_label, fontsize=11, fontweight="bold")
         ax.set_xlabel("Time (days)", fontsize=10)
@@ -238,7 +300,7 @@ for pair_label, mirna_pair in PAIRS:
 
     plt.subplots_adjust(wspace=0.08)
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    outname = f"km_mycn_stratified_{pair_label}_v14.png"
+    outname = f"km_mycn_stratified_{pair_label}.png"
     plt.savefig(outname, dpi=300, bbox_inches="tight")
     plt.savefig(outname.replace(".png", ".svg"), bbox_inches="tight")
     plt.close()
@@ -249,4 +311,11 @@ for pair_label, mirna_pair in PAIRS:
         df.drop(columns=[f"{m}_high"], inplace=True)
     df.drop(columns=["both_high"], inplace=True)
 
-print("\nAll 6D panels (v4) generated.")
+print("\nAll MYCN-stratified panels generated.")
+
+stats_df = pd.DataFrame(STATS_ROWS)
+stats_csv = "km_mycn_stratified_stats.csv"
+stats_df.to_csv(stats_csv, index=False)
+print(
+    f"Saved stats: {stats_csv}  ({len(stats_df)} rows = {len(PAIRS)} pairs × 3 records each)"
+)

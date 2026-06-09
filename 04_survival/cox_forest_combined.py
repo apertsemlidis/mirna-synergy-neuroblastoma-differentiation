@@ -4,18 +4,17 @@ Combined forest plot — one row per miRNA pair showing MYCN-adjusted HR
 for 'both high' co-expression, stratified on age. Uses penalized Cox
 for pairs with complete separation.
 
-Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
+Pairs (v16 master set, all six dose-response plates):
+  124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; paths now
-    `./cox_forest_combined_v4.{png,svg}`. Centralized
-    `multivariate_results/` sink removed.
-  - 2026-04-21: moved from survival/figure6E_combined_forest_v4.py to
-    survival/cox_forest/cox_forest_combined_v4.py per
-    .state/NAMING_PLAN_v3.md. `os.chdir(Path(__file__).parent)` added.
-  - 2026-04-17: created as v4 with median-split unification, Panel C
-    pair swap (137+449b → 19b+34b), penalized Cox on complete
-    separation, and DETECTION_CUTOFF. See .state/ledger.md 2026-04-17.
+v16 changes vs v14:
+  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
+    137+17, 19b+2110.
+  - Per-pair HR + CI + p stats dumped to `cox_forest_combined_stats.csv`
+    (Path 4 refactor).
+  - Output: `cox_forest_combined.{png,svg,pdf}` (unsuffixed).
+
+v14 archived at `survival/archive/v14_main_pairs_2026-05/cox_forest_combined_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -30,6 +29,19 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+# Shared Helvetica Neue font stack (mirrors scripts/figures/figure_style.FONT_STACK;
+# inlined because this script lives outside that package). Keeps Additional file 2
+# typographically consistent with the main figures.
+plt.rcParams["font.family"] = "sans-serif"
+plt.rcParams["font.sans-serif"] = [
+    "Helvetica Neue",
+    "Helvetica",
+    "Arial",
+    "DejaVu Sans",
+]
+plt.rcParams["pdf.fonttype"] = 42  # embed TrueType (not Type 3) per JBS
+plt.rcParams["ps.fonttype"] = 42
+
 os.chdir(Path(__file__).parent)
 
 expr = pd.read_csv("data/miRNA_expression_data.csv")
@@ -39,10 +51,12 @@ df["MYCN_amp"] = df["mycn_amplified_4.0"].astype(int)
 df["age_over_18mo"] = df["over_18_months_age_of_diagnosis"].astype(int)
 
 PAIRS = [
+    ("miR-124-3p + miR-363-3p", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
     ("miR-124-3p + miR-34b-5p", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
     ("miR-137-3p + miR-450b-5p", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
-    ("miR-19b-3p + miR-34b-5p", ["hsa-miR-19b-3p", "hsa-miR-34b-5p"]),
-    ("miR-124-3p + miR-363-3p", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("miR-137-3p + miR-449b-5p", ["hsa-miR-137-3p", "hsa-miR-449b-5p"]),
+    ("miR-137-3p + miR-17-5p", ["hsa-miR-137-3p", "hsa-miR-17-5p"]),
+    ("miR-19b-3p + miR-2110", ["hsa-miR-19b-3p", "hsa-miR-2110"]),
 ]
 
 results = []
@@ -126,11 +140,12 @@ for i, r in enumerate(results):
         linewidth=2.5,
         solid_capstyle="round",
     )
-    marker = "D" if r["penalized"] else "s"
+    # Same marker (square) for every pair; penalized fits are flagged by the
+    # dagger (†) and footnote, so the marker shape need not also encode it.
     ax.plot(
         r["hr"],
         y,
-        marker,
+        "s",
         color=color,
         markersize=8,
         zorder=5,
@@ -172,48 +187,54 @@ for i, r in enumerate(results):
     )
     ax.annotate(
         pstr,
-        xy=(1.72, y),
+        xy=(1.78, y),
         xycoords=("axes fraction", "data"),
         fontsize=8.5,
         va="center",
-        ha="left",
+        ha="center",
         fontweight="bold" if r["p"] < 0.05 else "normal",
     )
 
+# Column headers centered over their columns. (HR/CI values stay left-aligned
+# per forest-plot convention; the "HR (95% CI)" header is centered over the
+# column span. The penalized-estimate footnote lives in the caption, not here.)
 ax.annotate(
     "HR (95% CI)",
-    xy=(1.05, 1.0),
+    xy=(1.30, 1.0),
     xycoords="axes fraction",
     fontsize=7.5,
     fontweight="bold",
     va="bottom",
-    ha="left",
+    ha="center",
     color="#555555",
 )
 ax.annotate(
     "P",
-    xy=(1.72, 1.0),
+    xy=(1.78, 1.0),
     xycoords="axes fraction",
     fontsize=7.5,
     fontweight="bold",
     va="bottom",
-    ha="left",
+    ha="center",
     color="#555555",
 )
-
-if any(r["penalized"] for r in results):
-    ax.text(
-        0.0,
-        -0.25,
-        "\u2020 Penalized estimate (0 events in both-high group)",
-        transform=ax.transAxes,
-        fontsize=7.5,
-        color="#666666",
-        va="top",
-    )
 
 plt.savefig("cox_forest_combined.png", dpi=300, bbox_inches="tight")
 plt.savefig("cox_forest_combined.svg", bbox_inches="tight")
 plt.savefig("cox_forest_combined.pdf", bbox_inches="tight")
 plt.close()
-print("\nSaved: cox_forest_combined_v14.{png,svg,pdf}")
+print("\nSaved: cox_forest_combined.{png,svg,pdf}")
+
+# Stats CSV — per-pair HR, CI, p, penalized flag.
+stats_df = pd.DataFrame(results).rename(
+    columns={
+        "label": "pair",
+        "hr": "cox_HR",
+        "ci_lo": "cox_CI_lo",
+        "ci_hi": "cox_CI_hi",
+        "p": "cox_p",
+    }
+)
+stats_csv = "cox_forest_combined_stats.csv"
+stats_df.to_csv(stats_csv, index=False)
+print(f"Saved stats: {stats_csv}  ({len(stats_df)} rows = {len(PAIRS)} pairs)")

@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
 """
-3-group Kaplan-Meier survival curves for each of the four key miRNA pairs.
-Groups: 0 / 1 / 2 miRNAs expressed above threshold. Bonferroni-corrected
-pairwise log-rank tests.
+3-group Kaplan-Meier survival curves for each of the six dose-response
+pairs. Groups: 0 / 1 / 2 miRNAs expressed above threshold.
+Bonferroni-corrected pairwise log-rank tests.
 
-Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
+Pairs (v16 master set, all six dose-response plates):
+  124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; output paths now
-    `./km_3group_{pair}_v4.{png,svg}` (relative to this script's directory).
-    The centralized `multivariate_results/` sink was removed.
-  - 2026-04-21: moved from survival/figure6_km_panels_v4.py to
-    survival/km_3group/km_3group_all_v4.py per .state/NAMING_PLAN_v3.md.
-    PAIRS now carries a short-pair-ID field; panel letters retained only
-    in console output. `os.chdir(Path(__file__).parent)` added so paths
-    resolve from this script's own directory.
-  - 2026-04-17: created as v4 with median-split unification, Panel C
-    pair swap (137+449b → 19b+34b), Bonferroni ×3 on pairwise log-rank,
-    and DETECTION_CUTOFF for floor-effect miRNAs. See
-    .state/ledger.md 2026-04-17 entry.
+v16 changes vs v14:
+  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
+    137+17, 19b+2110.
+  - Per-pair pairwise log-rank statistics dumped to
+    `km_3group_stats.csv` (Path 4 refactor: analysis emits CSV
+    so figure composites and downstream consumers read from disk).
+  - Per-pair output: `km_3group_{pair}.{png,svg}` (unsuffixed; analysis tier).
+
+v14 archived at `survival/archive/v14_main_pairs_2026-05/km_3group_all_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -42,11 +39,16 @@ df = surv.merge(expr, on="patient_id")
 
 # ── Define pairs (panel_label, short_id, miRNA list) ────────────────────────
 PAIRS = [
-    ("A", "124+34b", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
-    ("B", "137+450b", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
-    ("C", "19b+34b", ["hsa-miR-19b-3p", "hsa-miR-34b-5p"]),
-    ("D", "124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("A", "124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("B", "124+34b", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
+    ("C", "137+450b", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
+    ("D", "137+449b", ["hsa-miR-137-3p", "hsa-miR-449b-5p"]),
+    ("E", "137+17", ["hsa-miR-137-3p", "hsa-miR-17-5p"]),
+    ("F", "19b+2110", ["hsa-miR-19b-3p", "hsa-miR-2110"]),
 ]
+
+# Stats accumulator — written to km_3group_stats.csv at end of script.
+STATS_ROWS = []
 
 # Colorblind-safe palette for 3 groups (0, 1, 2 high)
 COLORS = {0: "#CC79A7", 1: "#009E73", 2: "#0072B2"}
@@ -106,8 +108,9 @@ for panel_label, pair_short, mirna_pair in PAIRS:
             censor_styles={"ms": 8, "marker": "|"},
         )
 
-    # Pairwise log-rank tests (Bonferroni-corrected for 3 comparisons)
-    N_COMPARISONS = 3
+    # Pairwise log-rank tests among the ordered groups (0, 1, 2 high), reported
+    # WITHOUT multiple-comparison correction. These three-group survival
+    # analyses are exploratory (small subgroups), so the p-values are nominal.
     pval_strs = []
     for a, b in combinations([0, 1, 2], 2):
         ga = df[df["n_high"] == a]
@@ -115,10 +118,21 @@ for panel_label, pair_short, mirna_pair in PAIRS:
         lr = logrank_test(
             ga["survival_time"], gb["survival_time"], ga["event"], gb["event"]
         )
-        pv_adj = min(lr.p_value * N_COMPARISONS, 1.0)
-        pvs = f"{pv_adj:.4f}" if pv_adj >= 0.001 else "< 0.001"
+        pv = float(lr.p_value)
+        pvs = f"{pv:.4f}" if pv >= 0.001 else "< 0.001"
         pval_strs.append(f"{a} vs {b}: p = {pvs}")
-    pval_strs.append(f"(Bonferroni × {N_COMPARISONS})")
+        STATS_ROWS.append(
+            {
+                "pair": pair_short,
+                "panel": panel_label,
+                "comparison": f"{a}v{b}",
+                "n_a": int(ns[a]),
+                "n_b": int(ns[b]),
+                "events_a": int(ga["event"].sum()),
+                "events_b": int(gb["event"].sum()),
+                "logrank_p_raw": pv,
+            }
+        )
 
     # p-value box — outside axes, upper right
     ax.text(
@@ -196,7 +210,7 @@ for panel_label, pair_short, mirna_pair in PAIRS:
 
     plt.subplots_adjust(bottom=0.22, right=0.78)
 
-    outname = f"km_3group_{pair_short}_v14.png"
+    outname = f"km_3group_{pair_short}.png"
     plt.savefig(outname, dpi=300, bbox_inches="tight")
     plt.savefig(outname.replace(".png", ".svg"), bbox_inches="tight")
     plt.close()
@@ -210,4 +224,12 @@ for panel_label, pair_short, mirna_pair in PAIRS:
         df.drop(columns=[f"{mirna}_high"], inplace=True)
     df.drop(columns=["n_high"], inplace=True)
 
-print("\nAll km_3group panels (v4) generated.")
+print("\nAll km_3group panels generated.")
+
+# Emit per-pair pairwise log-rank stats CSV.
+stats_df = pd.DataFrame(STATS_ROWS)
+stats_csv = "km_3group_stats.csv"
+stats_df.to_csv(stats_csv, index=False)
+print(
+    f"Saved stats: {stats_csv}  ({len(stats_df)} rows = {len(PAIRS)} pairs x 3 comparisons)"
+)

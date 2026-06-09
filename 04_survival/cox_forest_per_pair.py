@@ -10,7 +10,7 @@ Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
 
 History:
   - 2026-04-21 (evening): outputs colocated with scripts; paths now
-    `./cox_forest_{pair}_v14.png`. Centralized `multivariate_results/`
+    `./cox_forest_{pair}.png`. Centralized `multivariate_results/`
     sink removed.
   - 2026-04-21: moved from survival/figure6E_forest_all_v4.py to
     survival/cox_forest/cox_forest_all_v4.py per
@@ -203,7 +203,7 @@ for pair_label, mirna_pair in PAIRS:
         color="#555555",
     )
 
-    outname = f"cox_forest_{pair_label}_v14.png"
+    outname = f"cox_forest_{pair_label}.png"
     plt.savefig(outname, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"  Saved: {outname}")

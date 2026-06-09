@@ -4,6 +4,14 @@ Generate Neurite Length volcano plot highlighting dual-positive hits.
 
 Dual-positive = NL synergy (p<0.05) AND CBCA improvement (p<0.05)
 FDR controlled via Fisher's combined test + BH correction.
+
+v16 changes vs v14:
+  - Emits per-combination stats CSV (`nl_volcano_stats.csv`) with
+    log2(CI), -log10(p_nl), p_cbca, same_family flag, dual_positive
+    flag for all 946 combinations. Path 4 refactor.
+  - Output filename suffix bumped to v16 for the volcano PNG/SVG.
+
+v14 retained as `generate_nl_volcano_dual_v14.py` (frozen).
 """
 
 import pandas as pd
@@ -89,9 +97,46 @@ def main():
         dual_positive = (ci < 1.0 and p_nl < 0.05) and cbca_pass
         log2_ci = np.log2(ci) if ci > 0 and not np.isnan(ci) else np.nan
 
-        volcano_data[combo] = [same_family, log2_ci, -log10(p_nl) if p_nl > 0 else 10, dual_positive, ci]
+        # Store extra fields for the NL/CBCA correlation panel (Fig 5 Panel B).
+        nl_synergy_val = combo_nl - hsa_nl
+        try:
+            cbca_improvement_val = atra_cbca - combo_cbca_reps.mean()
+        except Exception:
+            cbca_improvement_val = np.nan
+
+        volcano_data[combo] = [
+            same_family,
+            log2_ci,
+            -log10(p_nl) if p_nl > 0 else 10,
+            dual_positive,
+            ci,
+            nl_synergy_val,
+            cbca_improvement_val,
+        ]
 
     print(f"Processed {len(volcano_data)} combinations")
+
+    # Emit per-combination stats CSV (Path 4 refactor — figure composite
+    # consumes this rather than recomputing inline). Fig 5 Panel A uses
+    # log2_ci + neglog10_p_nl + same_family + dual_positive; Panel B uses
+    # nl_synergy + cbca_improvement.
+    stats_rows = []
+    for combo, vals in volcano_data.items():
+        same_family, log2_ci, neglog10_p_nl, dual_positive, ci, nl_syn, cbca_imp = vals
+        stats_rows.append({
+            "combination": combo,
+            "ci": ci,
+            "log2_ci": log2_ci,
+            "neglog10_p_nl": neglog10_p_nl,
+            "same_family": bool(same_family),
+            "dual_positive": bool(dual_positive),
+            "nl_synergy": nl_syn,
+            "cbca_improvement": cbca_imp,
+        })
+    stats_df = pd.DataFrame(stats_rows)
+    stats_csv = "nl_volcano_stats.csv"
+    stats_df.to_csv(stats_csv, index=False)
+    print(f"Saved stats: {stats_csv}  ({len(stats_df)} combinations)")
 
     # Separate by category
     # Priority order: dual-positive > NL synergy > same-family > non-significant
@@ -198,12 +243,12 @@ def main():
     outdir.mkdir(exist_ok=True)
 
     fig.tight_layout()
-    fig.savefig(outdir / 'neurite length CI volcano plot DUAL.png', dpi=300, bbox_inches='tight')
-    fig.savefig(outdir / 'neurite length CI volcano plot DUAL.svg', bbox_inches='tight')
+    fig.savefig(outdir / 'neurite length CI volcano plot DUAL v16.png', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir / 'neurite length CI volcano plot DUAL v16.svg', bbox_inches='tight')
     plt.close()
 
-    print(f"\n✓ Created: {outdir / 'neurite length CI volcano plot DUAL.png'}")
-    print(f"✓ Created: {outdir / 'neurite length CI volcano plot DUAL.svg'}")
+    print(f"\n✓ Created: {outdir / 'neurite length CI volcano plot DUAL v16.png'}")
+    print(f"✓ Created: {outdir / 'neurite length CI volcano plot DUAL v16.svg'}")
 
     # ---- Summary statistics with corrected analysis ----
     same_fam_all = {k:v for k,v in volcano_data.items() if v[0]}

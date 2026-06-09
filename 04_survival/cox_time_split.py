@@ -16,20 +16,18 @@ miRNA effect is consistent in both halves of follow-up; Panel A shows a
 delayed-effect pattern (stronger late), while Panel B's miRNA effect is
 stable across time (its PH violation is in the MYCN nuisance covariate).
 
-Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
+Pairs (v16 master set, all six dose-response plates):
+  124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
 Output:
-  ./cox_time_split_table_v14.csv (colocated with this script)
+  ./cox_time_split_table.csv (colocated; already-tidy stats output)
 
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; path now
-    `./cox_time_split_table_v14.csv`. Centralized `multivariate_results/`
-    sink removed.
-  - 2026-04-21: moved from survival/supplementary_time_split_table_v4.py
-    to survival/cox_time_split/cox_time_split_table_v4.py per
-    .state/NAMING_PLAN_v3.md. `os.chdir(Path(__file__).parent)` added.
-  - 2026-04-17: created as v4 to support Fix 4 / judgment item #2
-    (PH-violation disclosure). See .state/ledger.md 2026-04-17.
+v16 changes vs v14:
+  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
+    137+17, 19b+2110.
+  - Output is already a stats CSV — no separate _stats.csv emitted.
+
+v14 archived at `survival/archive/v14_main_pairs_2026-05/cox_time_split_table_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -47,10 +45,12 @@ SPLIT_DAYS = 702  # median event time across all 21 events
 
 # Final-model Figure 6 pairs (Panel label → two miRNAs)
 PAIRS = [
-    ("A", "124+34b", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
-    ("B", "137+450b", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
-    ("C", "19b+34b", ["hsa-miR-19b-3p", "hsa-miR-34b-5p"]),
-    ("D", "124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("A", "124+363", ["hsa-miR-124-3p", "hsa-miR-363-3p"]),
+    ("B", "124+34b", ["hsa-miR-124-3p", "hsa-miR-34b-5p"]),
+    ("C", "137+450b", ["hsa-miR-137-3p", "hsa-miR-450b-5p"]),
+    ("D", "137+449b", ["hsa-miR-137-3p", "hsa-miR-449b-5p"]),
+    ("E", "137+17", ["hsa-miR-137-3p", "hsa-miR-17-5p"]),
+    ("F", "19b+2110", ["hsa-miR-19b-3p", "hsa-miR-2110"]),
 ]
 
 # Kept consistent with figure6_km_panels_v4.py etc.
@@ -215,7 +215,7 @@ def main():
         ]
     ]
 
-    out_path = "cox_time_split_table_v14.csv"
+    out_path = "cox_time_split_table.csv"
     out.to_csv(out_path, index=False)
 
     # Markdown rendering for supplement draft / stdout
