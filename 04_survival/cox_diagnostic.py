@@ -1,21 +1,8 @@
 #!/usr/bin/env python3
 """
 Single-pair Cox PH diagnostic for miR-137-3p + miR-450b-5p. Same
-methodology as cox_forest/cox_forest_all_v4.py (the pair's manuscript
-Cox forest). Console-only output; no figures written.
-
-History:
-  - 2026-04-21: moved from survival/cox_mir137_mir450b_v4.py to
-    survival/cox_diagnostic/cox_diagnostic_137+450b_v4.py per
-    an internal directory reorganization. `os.chdir(Path(__file__).parent)` added;
-    input paths updated to `../miRNA_expression_data.csv` and
-    `../survival_data.csv`. The `_diagnostic_` infix now identifies
-    this as the single-pair deep-dive script category (distinct from
-    the `_preview_` tag on lifelines-native renders in cox_multivariate/).
-  - 2026-04-17: created as v4 with penalized Cox on complete
-    separation, captured PH assumption test, unified `>=` median-split
-    convention, and Bonferroni x2 on MYCN-stratum log-rank tests.
-    See the project ledger 2026-04-17.
+methodology as the manuscript Cox forest analysis. Console-only output;
+no figures written.
 """
 
 import os

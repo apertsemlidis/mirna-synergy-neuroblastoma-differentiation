@@ -12,8 +12,6 @@ Inputs (data/dose_response/input/):
   - final_doseresponse_echo_instructions.csv
   - nonvarwells_DR.txt
   - plate 1/ ... plate 6/  (each with neurite length.txt, cell body cluster area.txt, etc.)
-
-Derived from data/dose_response/dose_response.ipynb (cells 4-6).
 """
 
 import json

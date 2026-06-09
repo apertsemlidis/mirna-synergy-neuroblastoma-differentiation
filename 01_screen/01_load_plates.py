@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Step 1 of the screen_analysis_v14.py split
-(monolith now at scripts/archive/screen_outdated/screen_analysis_v14.py).
+Step 1 of the screen-processing pipeline.
 
-Loads raw Incucyte plate files, applies the same well-mapping, cleaning,
-and two-point normalization as the v14 monolith, and saves the resulting
+Loads raw Incucyte plate files, applies well-mapping, cleaning, and
+two-point normalization, and saves the resulting
 `complete` dict as a single multi-index parquet at:
 
     data/screen/complete.parquet
@@ -13,15 +12,13 @@ Also saves the list of control conditions detected during loading at:
 
     data/screen/controls.csv
 
-Downstream analysis-tier scripts (compute_hsa_abs_tables.py,
-compute_superhits.py, derive_control_strip.py) will read these
+Downstream steps read these
 artefacts instead of re-loading 152 MB of raw plates.
 
 Run `--verify` to additionally recompute the 44x44 HSA and ABS heatmap
 tables from the saved parquet and assert byte-equivalence (within float
-tolerance) against the existing data/screen/{HSA,ABS}_dfs/*.csv files
-that were produced by the monolith. This proves the split preserves the
-data path.
+tolerance) against the existing {HSA,ABS}_dfs/*.csv files. This confirms
+the data path is preserved.
 """
 
 import argparse
@@ -55,9 +52,8 @@ ALL_MEASURES = [
 NORMALIZE_TIME = 120
 
 
-# --- helpers ported verbatim from scripts/screen/fxns.py (kept inline so
-#     this file has no relative-path import dependency on fxns.py's
-#     module-level JSON loads). ---
+# --- helpers kept inline so this file has no relative-path import
+#     dependency. ---
 
 
 def mapper(df, plate, instructions, nonvarwells, plate4_fixed):
@@ -122,7 +118,7 @@ def load_replicates(measures):
 
 def build_complete(replicates, measures):
     """Concat the 12 (plate, rep) frames for each metric. Mirrors the
-    monolith's `complete[m] = pd.concat([...])` step."""
+    original pipeline's `complete[m] = pd.concat([...])` step."""
     complete = {}
     for measure in measures:
         frames = [
@@ -163,7 +159,7 @@ def save_complete(complete, out_path):
 
 def verify(parquet_path):
     """Recompute HSA + ABS tables from parquet and diff against the
-    existing data/screen/{HSA,ABS}_dfs/*.csv produced by the monolith."""
+    existing data/screen/{HSA,ABS}_dfs/*.csv produced by the original pipeline."""
     complete = load_complete(parquet_path)
     time_slice = slice(96, 126)
     pairs = {"nl": "neurite length", "cbca": "cell body cluster area"}

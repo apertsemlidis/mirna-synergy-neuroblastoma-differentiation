@@ -16,8 +16,6 @@ v16 changes vs v14:
   - all_pairs_nb_metrics.csv continues to be the per-pair per-module
     incremental-coverage table.
 
-v14 archived at `scripts/archive/target_analysis_v14/nb_specific_analysis_v14.py` (frozen).
-
 Gene signatures:
   - MYCN targets: WEI_MYCN_TARGETS_WITH_E_BOX (MSigDB, Wei et al. 2008)
   - ADRN identity: van Groningen et al. 2017 Nat Genet, Table S2

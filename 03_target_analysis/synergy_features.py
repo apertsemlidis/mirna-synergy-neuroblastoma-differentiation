@@ -12,8 +12,6 @@ v16 changes vs v14:
     written to `synergy_features_stats.csv` (Path 4 refactor — figure
     composite consumes this rather than recomputing inline).
   - all_features.csv continues to be the per-pair raw feature table.
-
-v14 archived at `scripts/archive/target_analysis_v14/synergy_features_v14.py` (frozen).
 """
 
 import argparse

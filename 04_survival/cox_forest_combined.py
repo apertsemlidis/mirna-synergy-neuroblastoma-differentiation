@@ -13,8 +13,6 @@ v16 changes vs v14:
   - Per-pair HR + CI + p stats dumped to `cox_forest_combined_stats.csv`
     (Path 4 refactor).
   - Output: `cox_forest_combined.{png,svg,pdf}` (unsuffixed).
-
-v14 archived at `survival/archive/v14_main_pairs_2026-05/cox_forest_combined_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -29,8 +27,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-# Shared Helvetica Neue font stack (mirrors scripts/figures/figure_style.FONT_STACK;
-# inlined because this script lives outside that package). Keeps Additional file 2
+# Shared Helvetica Neue font stack (inlined). Keeps Additional file 2
 # typographically consistent with the main figures.
 plt.rcParams["font.family"] = "sans-serif"
 plt.rcParams["font.sans-serif"] = [

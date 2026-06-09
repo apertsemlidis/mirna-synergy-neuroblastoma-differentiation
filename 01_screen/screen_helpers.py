@@ -2,22 +2,18 @@
 """
 Shared helpers for the screen analysis tier.
 
-Used by:
-  - load_screen.py            (verifies its parquet output via these fns)
-  - compute_hsa_abs_tables.py (writes the canonical 44x44 CSVs)
-  - compute_superhits.py      (reads `complete` for the t-test pipeline)
+Used by the three screen-processing steps (plate loading, heatmap tables,
+and superhit calling).
 
-Replaces the cwd-dependent fxns.py for these specific helpers: ORDERED_MIRS
-is inlined (was at module-level in fxns.py with the same value), and
-HSA_df / abs_heatmap_df are ported with no behaviour change — same float32
-cast, same singlet/combo split, same min vs max for the HSA branch.
+ORDERED_MIRS is inlined here; HSA_df / abs_heatmap_df are self-contained
+with the same float32 cast, singlet/combo split, and min vs max for the
+HSA branch.
 """
 
 import numpy as np
 import pandas as pd
 
-# Canonical miRNA ordering — clustermap-derived dendrogram order. Mirrors
-# fxns.ordered.
+# Canonical miRNA ordering — clustermap-derived dendrogram order.
 ORDERED_MIRS = [
     "hsa-miR-340-5p",
     "hsa-miR-124-3p",
@@ -67,7 +63,7 @@ ORDERED_MIRS = [
 
 
 def load_complete(parquet_path):
-    """Inverse of load_screen.save_complete.
+    """Inverse of the plate-loading step's save_complete.
 
     Returns dict[metric] -> DataFrame (condition index, time-point columns
     as int). The parquet schema is:

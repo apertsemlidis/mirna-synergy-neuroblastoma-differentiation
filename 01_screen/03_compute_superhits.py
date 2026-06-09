@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Step 3 of the screen_analysis_v14.py split
-(monolith now at scripts/archive/screen_outdated/screen_analysis_v14.py).
+Step 3 of the screen-processing pipeline.
 
-Reads data/screen/complete.parquet and reproduces the two superhit
-tables consumed downstream by screen_heatmaps_composite (the "superhits
-outlined" rectangles) and by the volcano plot scripts.
+Reads complete.parquet and reproduces the two superhit tables consumed
+downstream by the Figure 3 heatmaps (the "superhits outlined" rectangles)
+and by the volcano plot scripts.
 
-Pipeline (mirrors archived screen_analysis_v14.py lines 444-533):
+Pipeline:
   1. For every combo, compute mean NL, mean CBCA, mean NBP over the
      screen window (t = 96..126h, averaged over time and replicates).
   2. Keep combos where combo_CBCA < ATRA_CBCA (cytostatic) and
@@ -24,8 +23,8 @@ Outputs:
     data/screen/superhits.csv
 
 Run `--verify` to byte-compare the freshly written CSVs against the
-existing ones produced by the monolith. Falls back to numeric diff if
-the CSVs differ only in pandas-version float-repr.
+existing ones. Falls back to numeric diff if the CSVs differ only in
+pandas-version float-repr.
 """
 
 import argparse
@@ -46,7 +45,7 @@ TIME_SLICE = slice(96, 126)
 ATRA = "ATRA (25 uM)"
 
 # Column order matches the existing HSAhits_p05.csv produced by the
-# monolith (combo_nbp sits between "nl distance from HSA" and "one").
+# original pipeline (combo_nbp sits between "nl distance from HSA" and "one").
 HSAHITS_P05_COLS = [
     "combo_cbca",
     "combo_nl",
@@ -61,7 +60,7 @@ HSAHITS_P05_COLS = [
 
 # Existing superhits.csv uses a different name for the
 # HSA-pvalue column (compressed "pvalue", no underscore around "value").
-# This is an artefact of the monolith renaming between save points;
+# This is an artefact of the original pipeline renaming between save points;
 # matched so the file is byte-identical.
 HSAHITS_CYTO_COLS = [
     "combo_cbca",
@@ -215,7 +214,7 @@ def main():
 
     if not args.parquet.exists():
         raise SystemExit(
-            f"missing {args.parquet} — run scripts/screen/load_screen.py first"
+            f"missing {args.parquet} — run the plate-loading step first"
         )
 
     out_p05 = args.out_dir / "HSAhits_p05.csv"

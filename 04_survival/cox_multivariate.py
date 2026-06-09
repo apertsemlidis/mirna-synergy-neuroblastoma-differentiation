@@ -13,26 +13,6 @@ Pairs: the six dose-response pairs (Figure 7 panels A-F): 124+363, 124+34b,
 4-pair set, which included the now-deprecated 19b+34b.)
 
 Data: GSE155945 (Misiak et al., 2021) — 96 neuroblastoma tumors.
-
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; CLI default
-    --output-dir changed to "." (this script's directory after chdir).
-    Centralized `multivariate_results/` sink removed.
-  - 2026-04-21: moved from survival/multivariate_survival_v4.py to
-    survival/cox_multivariate/multivariate_survival_v4.py per
-    an internal directory reorganization. `os.chdir(Path(__file__).parent)` added;
-    CLI default --data-dir changed from "." to ".." (data CSVs still
-    live at survival/ root). Output filenames changed: long miRNA
-    names replaced with short pair IDs; non-unique renders
-    (km_univariate_, cox_forest_, km_mycn_stratified_) tagged with
-    `_preview_` to distinguish from the manuscript-grade km_3group /
-    cox_forest / km_mycn_stratified outputs produced by their
-    dedicated scripts.
-  - 2026-04-17: created as v4 with median-split unification, Panel C
-    pair swap (137+449b → 19b+34b), penalized Cox on complete
-    separation, PH assumption capture via proportional_hazard_test,
-    Model 4 (age-stratified) added, and _safe_fit helper for
-    convergence robustness. See the project ledger 2026-04-17.
 """
 
 import argparse
@@ -254,7 +234,7 @@ def run_multivariate_cox(data, mirna_pair, output_dir):
         cph3.print_summary()
 
     # --- Model 4: miRNA + MYCN, stratified by age (authoritative final model,
-    #     matches figure6E_forest_all_v4.py and the manuscript forest plot) ---
+    #     matches the manuscript forest plot) ---
     print(f"\n--- Cox Model 4 (+ MYCN, strata=age): {pair_label} ---")
     cph4, _ = _safe_fit(
         "Model 4",

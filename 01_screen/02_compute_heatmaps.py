@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """
-Step 2 of the screen_analysis_v14.py split
-(monolith now at scripts/archive/screen_outdated/screen_analysis_v14.py).
+Step 2 of the screen-processing pipeline.
 
-Reads data/screen/complete.parquet (produced by load_screen.py) and
-writes the 44x44 HSA and ABS heatmap tables for the canonical screen
-slice — the same files the monolith produced via lines 542-556 of the
-archived screen_analysis_v14.py:
+Reads complete.parquet (produced by step 1) and writes the 44x44 HSA and
+ABS heatmap tables for the canonical screen slice:
 
     for m in ['neurite length', 'cell body cluster area']:
         for t in [slice(96,126)]:
@@ -20,12 +17,11 @@ Outputs:
     data/screen/ABS_dfs/{nl,cbca}_slice(96, 126, None).csv
 
 Run `--verify` to byte-compare the freshly written CSVs against the
-existing ones (the ones currently consumed by
-screen_heatmaps_composite_v17 and the volcano stats pipeline). If the
-parquet path matches the monolith path, the diff should be zero.
+existing ones consumed by the Figure 3 heatmaps and the volcano stats
+pipeline.
 
-Functions are imported from load_screen.py so step 1 stays the source of
-truth for `complete` and the HSA/ABS math.
+Functions are imported from step 1 so it stays the source of truth for
+`complete` and the HSA/ABS math.
 """
 
 import argparse
@@ -41,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCREEN = ROOT / "data" / "screen"
 PARQUET = SCREEN / "complete.parquet"
 
-# (file_initials, metric_name) — matches the screen_analysis_v14 convention.
+# (file_initials, metric_name).
 METRICS = [
     ("nl", "neurite length"),
     ("cbca", "cell body cluster area"),
@@ -50,7 +46,7 @@ TIME_SLICE = slice(96, 126)
 
 
 def slice_tag(s: slice) -> str:
-    """Reproduce the monolith's filename suffix: str(slice(96,126)) →
+    """Reproduce the original pipeline's filename suffix: str(slice(96,126)) →
     'slice(96, 126, None)'."""
     return str(s)
 
@@ -124,7 +120,7 @@ def main():
 
     if not args.parquet.exists():
         raise SystemExit(
-            f"missing {args.parquet} — run scripts/screen/load_screen.py first"
+            f"missing {args.parquet} — run the plate-loading step first"
         )
 
     # Snapshot the existing CSVs before we overwrite, so --verify has

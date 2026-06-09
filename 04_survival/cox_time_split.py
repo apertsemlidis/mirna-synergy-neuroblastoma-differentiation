@@ -26,8 +26,6 @@ v16 changes vs v14:
   - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
     137+17, 19b+2110.
   - Output is already a stats CSV — no separate _stats.csv emitted.
-
-v14 archived at `survival/archive/v14_main_pairs_2026-05/cox_time_split_table_v14.py` (frozen, 4 pairs).
 """
 
 import os
@@ -53,7 +51,7 @@ PAIRS = [
     ("F", "19b+2110", ["hsa-miR-19b-3p", "hsa-miR-2110"]),
 ]
 
-# Kept consistent with figure6_km_panels_v4.py etc.
+# Kept consistent with the survival KM panels.
 DETECTION_CUTOFF = {
     "hsa-miR-200a-3p": 1.0,
     "hsa-miR-211-5p": 1.0,

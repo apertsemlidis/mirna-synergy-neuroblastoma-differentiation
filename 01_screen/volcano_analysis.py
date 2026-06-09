@@ -10,8 +10,6 @@ v16 changes vs v14:
     log2(CI), -log10(p_nl), p_cbca, same_family flag, dual_positive
     flag for all 946 combinations. Path 4 refactor.
   - Output filename suffix bumped to v16 for the volcano PNG/SVG.
-
-v14 retained as `generate_nl_volcano_dual_v14.py` (frozen).
 """
 
 import pandas as pd

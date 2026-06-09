@@ -14,8 +14,6 @@ v16 changes vs v14:
     `km_3group_stats.csv` (Path 4 refactor: analysis emits CSV
     so figure composites and downstream consumers read from disk).
   - Per-pair output: `km_3group_{pair}.{png,svg}` (unsuffixed; analysis tier).
-
-v14 archived at `survival/archive/v14_main_pairs_2026-05/km_3group_all_v14.py` (frozen, 4 pairs).
 """
 
 import os

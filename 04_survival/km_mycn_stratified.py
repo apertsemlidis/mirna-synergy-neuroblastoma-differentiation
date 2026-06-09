@@ -13,8 +13,6 @@ v16 changes vs v14:
   - Per-pair per-stratum log-rank + Cox HR statistics dumped to
     `km_mycn_stratified_stats.csv` (Path 4 refactor).
   - Per-pair output: `km_mycn_stratified_{pair}.{png,svg}` (unsuffixed).
-
-v14 archived at `survival/archive/v14_main_pairs_2026-05/km_mycn_stratified_all_v14.py` (frozen, 4 pairs).
 """
 
 import os

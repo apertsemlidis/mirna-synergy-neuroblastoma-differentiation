@@ -7,17 +7,6 @@ separation. Log-scale HR axis; hand-rolled HR-space rendering with
 HR/p sidecar columns.
 
 Pairs: 124+34b, 137+450b, 19b+34b, 124+363.
-
-History:
-  - 2026-04-21 (evening): outputs colocated with scripts; paths now
-    `./cox_forest_{pair}.png`. Centralized `multivariate_results/`
-    sink removed.
-  - 2026-04-21: moved from survival/figure6E_forest_all_v4.py to
-    survival/cox_forest/cox_forest_all_v4.py per
-    an internal directory reorganization. `os.chdir(Path(__file__).parent)` added.
-  - 2026-04-17: created as v4 with median-split unification, Panel C
-    pair swap (137+449b → 19b+34b), penalized Cox on complete
-    separation, and DETECTION_CUTOFF. See the project ledger 2026-04-17.
 """
 
 import os
