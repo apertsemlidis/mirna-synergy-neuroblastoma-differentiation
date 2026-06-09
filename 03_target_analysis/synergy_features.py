@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
 Systematic analysis of features distinguishing synergistic from
-non-synergistic miRNA pairs (Suggestion #3).
+non-synergistic miRNA pairs.
 
 Compares 34 dual-positive synergistic pairs against ~912 non-synergistic
 combinations across multiple features: target overlap, individual potency,
 target set size, and expression correlation in patient tumors.
 
-v16 changes vs v14:
+Outputs:
   - Per-feature Mann-Whitney U stats (medians, p-values, sample sizes)
-    written to `synergy_features_stats.csv` (Path 4 refactor — figure
-    composite consumes this rather than recomputing inline).
-  - all_features.csv continues to be the per-pair raw feature table.
+    -> `synergy_features_stats.csv`.
+  - `all_features.csv`: the per-pair raw feature table.
 """
 
 import argparse
@@ -345,7 +344,7 @@ def main():
         sig = "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "ns"
         print(f"  {feat:30s}  syn={syn_med:.4f}  nonsyn={nonsyn_med:.4f}  p={p:.4e}  {sig}")
 
-    # --- v16 stats CSV (Path 4 refactor) ---
+    # --- stats CSV ---
     stats_rows = []
     feature_key_map = {
         "Jaccard similarity":      "jaccard",

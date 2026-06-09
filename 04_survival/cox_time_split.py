@@ -16,16 +16,11 @@ miRNA effect is consistent in both halves of follow-up; Panel A shows a
 delayed-effect pattern (stronger late), while Panel B's miRNA effect is
 stable across time (its PH violation is in the MYCN nuisance covariate).
 
-Pairs (v16 master set, all six dose-response plates):
+Pairs (the six dose-response pairs):
   124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
 Output:
   ./cox_time_split_table.csv (colocated; already-tidy stats output)
-
-v16 changes vs v14:
-  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
-    137+17, 19b+2110.
-  - Output is already a stats CSV — no separate _stats.csv emitted.
 """
 
 import os

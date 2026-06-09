@@ -5,11 +5,9 @@ Generate Neurite Length volcano plot highlighting dual-positive hits.
 Dual-positive = NL synergy (p<0.05) AND CBCA improvement (p<0.05)
 FDR controlled via Fisher's combined test + BH correction.
 
-v16 changes vs v14:
-  - Emits per-combination stats CSV (`nl_volcano_stats.csv`) with
-    log2(CI), -log10(p_nl), p_cbca, same_family flag, dual_positive
-    flag for all 946 combinations. Path 4 refactor.
-  - Output filename suffix bumped to v16 for the volcano PNG/SVG.
+Also emits a per-combination stats CSV (`nl_volcano_stats.csv`) with
+log2(CI), -log10(p_nl), p_cbca, same_family flag, and dual_positive
+flag for all 946 combinations.
 """
 
 import pandas as pd
@@ -114,8 +112,7 @@ def main():
 
     print(f"Processed {len(volcano_data)} combinations")
 
-    # Emit per-combination stats CSV (Path 4 refactor — figure composite
-    # consumes this rather than recomputing inline). Fig 5 Panel A uses
+    # Emit per-combination stats CSV (consumed by the figure). Fig 5 Panel A uses
     # log2_ci + neglog10_p_nl + same_family + dual_positive; Panel B uses
     # nl_synergy + cbca_improvement.
     stats_rows = []
@@ -241,12 +238,12 @@ def main():
     outdir.mkdir(exist_ok=True)
 
     fig.tight_layout()
-    fig.savefig(outdir / 'neurite length CI volcano plot DUAL v16.png', dpi=300, bbox_inches='tight')
-    fig.savefig(outdir / 'neurite length CI volcano plot DUAL v16.svg', bbox_inches='tight')
+    fig.savefig(outdir / 'neurite length CI volcano plot DUAL.png', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir / 'neurite length CI volcano plot DUAL.svg', bbox_inches='tight')
     plt.close()
 
-    print(f"\n✓ Created: {outdir / 'neurite length CI volcano plot DUAL v16.png'}")
-    print(f"✓ Created: {outdir / 'neurite length CI volcano plot DUAL v16.svg'}")
+    print(f"\n✓ Created: {outdir / 'neurite length CI volcano plot DUAL.png'}")
+    print(f"✓ Created: {outdir / 'neurite length CI volcano plot DUAL.svg'}")
 
     # ---- Summary statistics with corrected analysis ----
     same_fam_all = {k:v for k,v in volcano_data.items() if v[0]}

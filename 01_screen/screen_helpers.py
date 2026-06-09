@@ -96,7 +96,7 @@ def _combos_singlets(s):
 
 def abs_heatmap_df(complete, measure, time_slice, ordered=ORDERED_MIRS):
     """44x44 of mean(measure) per single agent (diagonal) and per
-    combination (off-diagonal). Symmetric. Float32 to match v14.
+    combination (off-diagonal). Symmetric. Float32.
     """
     s = complete[measure].loc[:, time_slice]
     combos, singlets = _combos_singlets(s)

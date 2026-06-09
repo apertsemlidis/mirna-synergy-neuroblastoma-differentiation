@@ -4,15 +4,12 @@ MYCN-stratified Kaplan-Meier survival for each of the six dose-response
 pairs. Each pair produces a two-panel figure (MYCN non-amplified |
 amplified). Also fits the final age-stratified Cox model per pair.
 
-Pairs (v16 master set, all six dose-response plates):
+Pairs (the six dose-response pairs):
   124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-v16 changes vs v14:
-  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
-    137+17, 19b+2110.
-  - Per-pair per-stratum log-rank + Cox HR statistics dumped to
-    `km_mycn_stratified_stats.csv` (Path 4 refactor).
-  - Per-pair output: `km_mycn_stratified_{pair}.{png,svg}` (unsuffixed).
+Outputs:
+  - Per-pair per-stratum log-rank + Cox HR statistics -> `km_mycn_stratified_stats.csv`.
+  - Per-pair curves -> `km_mycn_stratified_{pair}.{png,svg}`.
 """
 
 import os

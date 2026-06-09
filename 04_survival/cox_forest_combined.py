@@ -4,15 +4,12 @@ Combined forest plot — one row per miRNA pair showing MYCN-adjusted HR
 for 'both high' co-expression, stratified on age. Uses penalized Cox
 for pairs with complete separation.
 
-Pairs (v16 master set, all six dose-response plates):
+Pairs (the six dose-response pairs):
   124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-v16 changes vs v14:
-  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
-    137+17, 19b+2110.
-  - Per-pair HR + CI + p stats dumped to `cox_forest_combined_stats.csv`
-    (Path 4 refactor).
-  - Output: `cox_forest_combined.{png,svg,pdf}` (unsuffixed).
+Outputs:
+  - Per-pair HR + CI + p stats -> `cox_forest_combined_stats.csv`.
+  - Forest plot -> `cox_forest_combined.{png,svg,pdf}`.
 """
 
 import os

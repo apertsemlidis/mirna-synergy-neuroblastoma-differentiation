@@ -9,12 +9,10 @@ signatures, and retinoid response genes.
 Reuses the same coverage/complementarity metrics as the generic analysis
 but loads gene sets from local files rather than Enrichr.
 
-v16 changes vs v14:
+Outputs:
   - Per-category Mann-Whitney U stats (medians, p-values, sample sizes)
-    written to `nb_specific_stats.csv` (Path 4 refactor — figure
-    composite consumes this rather than recomputing inline).
-  - all_pairs_nb_metrics.csv continues to be the per-pair per-module
-    incremental-coverage table.
+    -> `nb_specific_stats.csv`.
+  - `all_pairs_nb_metrics.csv`: the per-pair per-module incremental-coverage table.
 
 Gene signatures:
   - MYCN targets: WEI_MYCN_TARGETS_WITH_E_BOX (MSigDB, Wei et al. 2008)
@@ -402,7 +400,7 @@ def generate_summary_figure(combined: pd.DataFrame, outdir: str) -> None:
             "mannwhitney_U": float(u), "mannwhitney_p_onesided_greater": float(p),
         })
 
-    # --- v16 addition: per-module Mann-Whitney tests ---
+    # --- per-module Mann-Whitney tests ---
     # The figure-rendering composite displays brackets between specific
     # modules (ADRN vs MYCN, ADRN vs Retinoid), not aggregated categories.
     # Emit per-module summaries and the specific tests used on the figure.

@@ -4,16 +4,12 @@
 pairs. Groups: 0 / 1 / 2 miRNAs expressed above threshold.
 Bonferroni-corrected pairwise log-rank tests.
 
-Pairs (v16 master set, all six dose-response plates):
+Pairs (the six dose-response pairs):
   124+363, 124+34b, 137+450b, 137+449b, 137+17, 19b+2110.
 
-v16 changes vs v14:
-  - PAIRS swap: drop 19b+34b (no dose-response data); add 137+449b,
-    137+17, 19b+2110.
-  - Per-pair pairwise log-rank statistics dumped to
-    `km_3group_stats.csv` (Path 4 refactor: analysis emits CSV
-    so figure composites and downstream consumers read from disk).
-  - Per-pair output: `km_3group_{pair}.{png,svg}` (unsuffixed; analysis tier).
+Outputs:
+  - Per-pair pairwise log-rank statistics -> `km_3group_stats.csv`.
+  - Per-pair curves -> `km_3group_{pair}.{png,svg}`.
 """
 
 import os
