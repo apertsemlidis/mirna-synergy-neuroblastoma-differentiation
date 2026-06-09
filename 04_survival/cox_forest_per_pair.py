@@ -14,10 +14,10 @@ History:
     sink removed.
   - 2026-04-21: moved from survival/figure6E_forest_all_v4.py to
     survival/cox_forest/cox_forest_all_v4.py per
-    .state/NAMING_PLAN_v3.md. `os.chdir(Path(__file__).parent)` added.
+    an internal directory reorganization. `os.chdir(Path(__file__).parent)` added.
   - 2026-04-17: created as v4 with median-split unification, Panel C
     pair swap (137+449b → 19b+34b), penalized Cox on complete
-    separation, and DETECTION_CUTOFF. See .state/ledger.md 2026-04-17.
+    separation, and DETECTION_CUTOFF. See the project ledger 2026-04-17.
 """
 
 import os

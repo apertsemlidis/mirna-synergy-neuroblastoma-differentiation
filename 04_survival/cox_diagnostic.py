@@ -7,7 +7,7 @@ Cox forest). Console-only output; no figures written.
 History:
   - 2026-04-21: moved from survival/cox_mir137_mir450b_v4.py to
     survival/cox_diagnostic/cox_diagnostic_137+450b_v4.py per
-    .state/NAMING_PLAN_v3.md. `os.chdir(Path(__file__).parent)` added;
+    an internal directory reorganization. `os.chdir(Path(__file__).parent)` added;
     input paths updated to `../miRNA_expression_data.csv` and
     `../survival_data.csv`. The `_diagnostic_` infix now identifies
     this as the single-pair deep-dive script category (distinct from
@@ -15,7 +15,7 @@ History:
   - 2026-04-17: created as v4 with penalized Cox on complete
     separation, captured PH assumption test, unified `>=` median-split
     convention, and Bonferroni x2 on MYCN-stratum log-rank tests.
-    See .state/ledger.md 2026-04-17.
+    See the project ledger 2026-04-17.
 """
 
 import os
