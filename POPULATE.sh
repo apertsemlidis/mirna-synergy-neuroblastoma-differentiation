@@ -73,6 +73,7 @@ cpy "$PAPER/scripts/screen/compute_superhits.py"                   "$REPO/01_scr
 cpy "$PAPER/scripts/screen/screen_helpers.py"                      "$REPO/01_screen/screen_helpers.py"
 cpy "$PAPER/scripts/screen/generate_nl_volcano_dual.py"            "$REPO/01_screen/volcano_analysis.py"
 cpy "$PAPER/scripts/screen/generate_qqplots.py"                    "$REPO/01_screen/qqplots.py"
+cpy "$PAPER/scripts/screen/generate_pvalue_histograms.py"          "$REPO/01_screen/pvalue_histograms.py"
 # Screen scores + family annotations (inputs)
 cpy "$PAPER/data/screen/NL_allcombinations_vs_HSA.csv"             "$REPO/01_screen/nl_hsa_scores.csv"
 cpy "$PAPER/data/screen/CBCA_allcombinations_vs_ATRA.csv"          "$REPO/01_screen/cbca_scores.csv"
@@ -229,7 +230,8 @@ done < <(find "$REPO" -name "*.py" -print0)
 
 # 01_screen/: scripts that os.chdir into data/screen now chdir to their own folder.
 for f in "$REPO/01_screen/volcano_analysis.py" \
-         "$REPO/01_screen/qqplots.py"; do
+         "$REPO/01_screen/qqplots.py" \
+         "$REPO/01_screen/pvalue_histograms.py"; do
     [ -f "$f" ] && SED_INPLACE \
         -e 's|os\.chdir(Path(__file__)\.resolve()\.parents\[2\] / "data" / "screen")|os.chdir(Path(__file__).resolve().parent)|g' \
         "$f"

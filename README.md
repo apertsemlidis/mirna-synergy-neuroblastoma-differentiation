@@ -27,6 +27,7 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 │   ├── 03_compute_superhits.py        # Superhit calls (NL + CBCA significance gates)
 │   ├── volcano_analysis.py            # Dual-phenotype NL volcano + stats (Figure 5A)
 │   ├── qqplots.py                     # NL/CBCA p-value QQ plots (supplementary)
+│   ├── pvalue_histograms.py           # NL/CBCA p-value histograms (supplementary; companion to qqplots)
 │   ├── screen_helpers.py             # Shared screen functions
 │   ├── nl_hsa_scores.csv              # Neurite-length HSA scores, 946 combinations
 │   ├── cbca_scores.csv                # Cell-body cluster-area scores, 946 combinations

@@ -29,3 +29,6 @@ miRTarBase_MTI.csv
 
 # Raw Incucyte data (too large for GitHub; available upon request)
 Incucyte_raw_data*/
+
+# Runtime QC output from qqplots.py / pvalue_histograms.py
+QC_images/
