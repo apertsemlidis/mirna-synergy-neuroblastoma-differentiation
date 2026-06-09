@@ -8,160 +8,155 @@ Code and processed data for:
 >
 > Preprint: [bioRxiv](https://doi.org/10.64898/2026.03.04.709166)
 
-## Repository Structure
+## What this repository ships
+
+This is a **reproducibility archive**, not a turnkey figure-rendering pipeline. For each analysis domain it provides:
+
+- the **analysis scripts** and their **pre-computed output CSVs**,
+- the **processed input data** (the raw instrument data is too large / licensed separately — see *External Data*),
+- the **final manuscript figures** as static `figures/figure_N.{pdf,png}` and `figures/additional_file_N.*`.
+
+The figure-assembly composites (the scripts that lay out panels into the publication figures) are **not** included; they live in the private project tree. To reproduce a figure's underlying numbers, re-run the listed analysis script — it regenerates the CSVs under its `outputs/` (or domain) folder, which match the shipped copies. The static figure files are the exact images in the paper.
+
+## Repository structure
 
 ```
-├── 01_screen/                              # Primary combinatorial screen (Figures 3, 5)
-│   ├── screen_analysis.py                  # HSA synergy scoring from raw Incucyte data
-│   ├── screen_helpers.py                   # Shared functions for screen_analysis.py
-│   ├── volcano_plot.py                     # Dual-phenotype volcano (standalone Panel A of Figure 5)
-│   ├── nl_cbca_correlation.py              # NL synergy vs CBCA improvement (standalone Panel B of Figure 5)
-│   ├── qqplots.py                          # NL/CBCA p-value QQ plots (supplementary)
-│   ├── nl_hsa_scores.csv                   # Neurite length HSA scores, 946 combinations
-│   ├── cbca_scores.csv                     # Cell body cluster area scores, 946 combinations
-│   ├── mirna_family_info.csv               # miRNA family annotations (same-family pair filtering)
-│   ├── superhits.csv                       # 33 superhits passing NL + CBCA significance gates
-│   └── heatmap_data/                       # 96–126 h time-window matrices (Figure 3)
-│       ├── nl_hsa.csv                      # NL relative to highest single agent
-│       ├── nl_absolute.csv                 # NL in absolute units
-│       ├── cbca_hsa.csv                    # CBCA relative to lowest single agent
-│       └── cbca_absolute.csv               # CBCA in absolute units
+├── 01_screen/                         # Primary combinatorial screen (Figures 3, 5)
+│   ├── 01_load_plates.py              # Load raw Incucyte plates → normalized table (needs raw data)
+│   ├── 02_compute_heatmaps.py         # 44×44 HSA + absolute heatmap tables (Figure 3)
+│   ├── 03_compute_superhits.py        # Superhit calls (NL + CBCA significance gates)
+│   ├── volcano_analysis.py            # Dual-phenotype NL volcano + stats (Figure 5A)
+│   ├── qqplots.py                     # NL/CBCA p-value QQ plots (supplementary)
+│   ├── screen_helpers.py             # Shared screen functions
+│   ├── nl_hsa_scores.csv              # Neurite-length HSA scores, 946 combinations
+│   ├── cbca_scores.csv                # Cell-body cluster-area scores, 946 combinations
+│   ├── nl_volcano_stats.csv           # Per-combination volcano statistics (Figure 5A)
+│   ├── mirna_family_info.csv          # miRNA family annotations (same-family pair filtering)
+│   ├── superhits.csv                  # Superhits passing NL + CBCA gates
+│   └── heatmap_data/                  # 96–126 h time-window matrices (Figure 3)
 │
-├── 02_dose_response/                       # Dose-response validation (Methods/Discussion only; no figure)
-│   ├── process_dose_response.py            # Processing pipeline (requires raw plate data, not shipped)
-│   └── output/                             # Processed dose-response artifacts
+├── 02_dose_response/                  # Dose-response time course (Figure 6)
+│   ├── process_dose_response.py       # Raw plate exports → SynergyFinder-format CSVs (needs raw data)
+│   └── output/                        # Processed time-course curves (PNG/SVG), combined CSVs, synergy reports
 │
-├── 03_target_analysis/                     # Target-space complementarity (Figures 4, 7, 8)
-│   ├── target_complementarity.py           # Per-pair coverage & complementarity analysis (Figure 4)
-│   ├── batch_analysis.py                   # Run target_complementarity across all 31 pairs
-│   ├── statistical_tests.py                # NBS statistics + manuscript text generation
-│   ├── nb_specific_analysis.py             # ADRN/MES/MYCN/retinoid module coverage (Figure 8)
-│   ├── synergy_features.py                 # Distinguishing features of synergistic pairs (Figure 7)
-│   ├── compare_databases.py                # TargetScan vs miRTarBase comparison
-│   ├── ontology_venn.py                    # Pathway-overlap Venn diagrams (supplementary)
-│   ├── synergistic_pairs.csv               # 31 synergistic miRNA pairs (input)
-│   ├── external/                           # External resources (TargetScan, miRTarBase, NB signatures)
-│   │   ├── targetscan72_hsa.tsv
-│   │   ├── mirtarbase_mti.csv
-│   │   └── nb_signatures/
-│   └── outputs/                            # Pre-computed metrics for the figure composites
-│       ├── pairs_summary.csv               # Per-pair Inc_on, Inc_ctrl, NBS
-│       ├── per_pair/                       # Per-pair module metrics + term lists (Figure 4)
-│       ├── all_pairs_nb_metrics.csv        # NB-specific incremental coverage (Figure 8)
-│       └── all_features.csv                # Synergy-feature comparison data (Figure 7)
+├── 03_target_analysis/                # Target-space complementarity (Figures 4, 8, 9)
+│   ├── target_complementarity.py      # Per-pair module coverage & complementarity (Figure 4)
+│   ├── batch_analysis.py              # miRTarBase (validated-target) batch over the pair set
+│   ├── statistical_tests.py           # Reinforcement-vs-dilution statistics
+│   ├── synergy_features.py            # Synergistic vs non-synergistic feature comparison (Figure 8)
+│   ├── nb_specific_analysis.py        # ADRN/MES/MYCN/retinoid module coverage (Figure 9)
+│   ├── compare_databases.py           # TargetScan vs miRTarBase comparison
+│   ├── ontology_venn.py               # Pathway-overlap Venn diagrams (supplementary)
+│   ├── synergistic_pairs.csv          # 31 synergistic miRNA pairs (master input)
+│   ├── external/nb_signatures/        # Curated ADRN/MES/MYCN/retinoid gene sets (shipped)
+│   └── outputs/                       # Pre-computed metrics consumed by the figures
+│       ├── pairs_summary.csv          # Per-pair incremental coverage summary
+│       ├── per_pair/                  # Per-pair module metrics + term lists (Figure 4; 20 pairs)
+│       ├── all_pairs_nb_metrics.csv   # NB-specific incremental coverage (Figure 9)
+│       ├── nb_specific_stats.csv      # NB-module Mann-Whitney statistics (Figure 9)
+│       ├── all_features.csv           # Synergy-feature comparison data (Figure 8)
+│       └── synergy_features_stats.csv # Synergy-feature statistics (Figure 8)
 │
-├── 04_survival/                            # Patient survival (Figure 6, Additional files 2, 3)
-│   ├── km_3group.py                        # 3-group KM curves (Figure 6, per pair)
-│   ├── km_3group_screen.py                 # Sweep all 31 pairs
-│   ├── km_mycn_stratified.py               # MYCN-amplified/non-amplified KM (Additional file 3)
-│   ├── km_mycn_stratified_screen.py        # Sweep all 31 pairs, MYCN-stratified
-│   ├── cox_forest_per_pair.py              # Per-pair Cox forest plots
-│   ├── cox_forest_combined.py              # Combined Cox forest, all four pairs (Additional file 2)
-│   ├── cox_multivariate.py                 # Cox PH adjusting for MYCN + age stratification
-│   ├── cox_time_split.py                   # Time-split HR sensitivity table (Additional file 1)
-│   ├── cox_diagnostic.py                   # Single-pair Cox diagnostic (137 + 450b)
-│   └── data/                               # GSE155945-derived patient data
-│       ├── miRNA_expression_data.csv
-│       └── survival_data.csv
+├── 04_survival/                       # Patient survival (Figure 7, Additional files 1–3)
+│   ├── km_3group.py                   # 3-group KM curves, per pair (Figure 7)
+│   ├── km_3group_screen.py            # Sweep all 31 pairs
+│   ├── km_mycn_stratified.py          # MYCN-amplified / non-amplified KM (Additional file 3)
+│   ├── km_mycn_stratified_screen.py   # Sweep all 31 pairs, MYCN-stratified
+│   ├── cox_forest_per_pair.py         # Per-pair Cox forest plots
+│   ├── cox_forest_combined.py         # Combined Cox forest, six dose-response pairs (Additional file 2)
+│   ├── cox_multivariate.py            # Cox PH adjusting for MYCN + age stratification
+│   ├── cox_time_split.py              # Time-split HR sensitivity table (Additional file 1)
+│   ├── cox_diagnostic.py              # Single-pair Cox diagnostic (miR-137-3p + miR-450b-5p)
+│   ├── *_stats.csv                    # Pre-computed KM / Cox statistics
+│   └── data/                          # GSE155945-derived patient data (expression + survival)
 │
-├── figures/                                # Composite-assembly scripts for manuscript figures
-│   ├── figure3_screen_heatmaps.py          # Figure 3: NL + CBCA heatmaps with hit overlays
-│   ├── figure4_target_complementarity.py   # Figure 4 wrapper (uses figure4_panels.load_batch_data)
-│   ├── figure4_panels.py                   # Figure 4 plotting logic (panel A boxplot + B/C scatter)
-│   ├── figure5_volcano_correlation.py      # Figure 5: dual-phenotype volcano + NL/CBCA correlation
-│   ├── figure6_km_3group.py                # Figure 6: 3-group KMs for the four synergistic pairs
-│   ├── figure7_synergy_features.py         # Figure 7: features distinguishing synergistic pairs
-│   ├── figure8_nb_specific.py              # Figure 8: NB-specific module incremental coverage
-│   ├── additional_file_2_cox_forest.py     # Additional file 2 wrapper (delegates to cox_forest_combined.py)
-│   ├── additional_file_3_km_mycn.py        # Additional file 3: MYCN-stratified KMs
-│   └── figure_style.py                     # Shared matplotlib style settings
+├── figures/                           # Final manuscript figures (static)
+│   ├── figure_1.{pdf,png} … figure_9.{pdf,png}
+│   ├── additional_file_1.csv          # Time-split Cox HR table
+│   └── additional_file_2.{pdf,png}, additional_file_3.{pdf,png}
 │
-├── POPULATE.sh                             # Source-of-truth script for repopulating from the project tree
+├── POPULATE.sh                        # Populates this repo from the private project tree
 ├── LICENSE
 └── README.md
 ```
 
-## Figure → Script → Data Mapping
+## Figure → analysis script → data mapping
 
-| Manuscript artifact | Composite script | Data dependency |
+Each figure ships as a static `figures/figure_N.{pdf,png}`. The table below lists the analysis script and data that produce its underlying numbers (composites that lay out the panels are not shipped — see *What this repository ships*).
+
+| Manuscript figure | Underlying analysis script | Data |
 |---|---|---|
-| Figure 3 | `figures/figure3_screen_heatmaps.py` | `01_screen/heatmap_data/`, `01_screen/superhits.csv` |
-| Figure 4 | `figures/figure4_target_complementarity.py` | `03_target_analysis/outputs/per_pair/` |
-| Figure 5 | `figures/figure5_volcano_correlation.py` | `01_screen/{nl_hsa_scores,cbca_scores,mirna_family_info}.csv` |
-| Figure 6 | `figures/figure6_km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
-| Figure 7 | `figures/figure7_synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
-| Figure 8 | `figures/figure8_nb_specific.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
-| Additional file 1 | `04_survival/cox_time_split.py` (pre-rendered copy at `figures/Additional file 1 v15.csv`) | `04_survival/data/` |
-| Additional file 2 | `figures/additional_file_2_cox_forest.py` → `04_survival/cox_forest_combined.py` | `04_survival/data/` |
-| Additional file 3 | `figures/additional_file_3_km_mycn.py` | `04_survival/data/` |
+| Figure 1 (concept schematic) | — (illustration, no code) | — |
+| Figure 2 (screening method) | — (microscopy / plate map) | raw Incucyte (not shipped) |
+| Figure 3 (NL + CBCA heatmaps) | `01_screen/02_compute_heatmaps.py`, `03_compute_superhits.py` | `01_screen/heatmap_data/`, `superhits.csv` |
+| Figure 4 (target complementarity) | `03_target_analysis/target_complementarity.py` + `batch_analysis.py` | `03_target_analysis/outputs/per_pair/` |
+| Figure 5 (volcano + NL/CBCA correlation) | `01_screen/volcano_analysis.py` | `01_screen/{nl_hsa_scores,cbca_scores,nl_volcano_stats,mirna_family_info}.csv` |
+| Figure 6 (dose-response time course) | `02_dose_response/process_dose_response.py` | `02_dose_response/output/` |
+| Figure 7 (3-group KM survival) | `04_survival/km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
+| Figure 8 (synergy features) | `03_target_analysis/synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
+| Figure 9 (NB-specific module coverage) | `03_target_analysis/nb_specific_analysis.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
+| Additional file 1 (time-split Cox table) | `04_survival/cox_time_split.py` | `04_survival/data/` |
+| Additional file 2 (combined Cox forest) | `04_survival/cox_forest_combined.py` | `04_survival/data/` |
+| Additional file 3 (MYCN-stratified KM) | `04_survival/km_mycn_stratified.py` | `04_survival/data/` |
 
-Each composite is self-contained: it loads the shipped CSVs, runs the analysis, and saves both PNG and PDF outputs into `figures/` under the canonical `Figure N v15.{png,pdf}` / `Additional file N v15.{png,pdf}` name. Running any composite from the repo root works without arguments:
+Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assembled outside this codebase.
 
-```bash
-python figures/figure3_screen_heatmaps.py
-python figures/figure5_volcano_correlation.py
-python figures/figure6_km_3group.py
-# ... etc.
-```
+## What each subdirectory does
 
-Figures 1 and 2 are vector schematics / microscopy panels assembled outside this codebase; they are not regenerated by any script in this repo.
+### 01_screen — combinatorial miRNA screen
 
-## What Each Subdirectory Does
+946 pairwise miRNA combinations were screened in SK-N-BE(2)-C neuroblastoma cells for synergistic effects on neurite length (NL) and growth arrest (cell-body cluster area, CBCA). HSA (Highest Single Agent) scores identify combinations exceeding the strongest single agent; dual-phenotype filtering requires both NL synergy (p < 0.05, CI < 1) and CBCA improvement over ATRA (p < 0.05).
 
-### 01_screen — Combinatorial miRNA Screen
+- `01_load_plates.py` → `02_compute_heatmaps.py` → `03_compute_superhits.py` is the screen-processing pipeline (split from the original monolith). Step 1 needs the raw Incucyte NeuroTrack data (≈152 MB; available on request); steps 2–3 produce the shipped `heatmap_data/` and `superhits.csv`.
+- `volcano_analysis.py` produces the Figure 5A dual-phenotype volcano and emits `nl_volcano_stats.csv` (Fisher's combined test + BH correction).
 
-946 pairwise miRNA combinations were screened in SK-N-BE(2)-C neuroblastoma cells for synergistic effects on neurite length and growth arrest. HSA (Highest Single Agent) synergy scores identify combinations exceeding the strongest single agent. Dual-phenotype filtering requires both NL synergy (p < 0.05, CI < 1) and CBCA improvement over ATRA (p < 0.05).
+### 02_dose_response — dose-response validation
 
-- `screen_analysis.py` is the original notebook-derived pipeline that processes raw Incucyte NeuroTrack data (not in this repo — 152 MB; available on request) into the summary CSVs and `heatmap_data/`. Included here for reproducibility and audit. Self-contained scripts below operate on the shipped CSV outputs.
-- `volcano_plot.py`, `nl_cbca_correlation.py` produce the original standalone Figure 5 panels and also emit the manuscript's summary statistics (Fisher's combined test + BH, permutation tests).
+Dose-response interaction modeling (SynergyFinder 3.0) and live-cell time courses for the six validated synergistic pairs. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the time-course curves there underlie **Figure 6**. Raw plate data is not included.
 
-### 02_dose_response — Synergy Validation
+### 03_target_analysis — target-space complementarity
 
-Dose-response interaction modeling using SynergyFinder 3.0. Validation results for the four synergistic pairs are discussed in the manuscript prose (no main-text figure). Raw IncuCyte plate data is not included; the `output/` folder ships the processed dose-response curves and synergy reports.
+Incremental pathway coverage and target complementarity from TargetScan v7.2 predictions, across three analyses:
 
-### 03_target_analysis — Target-Space Complementarity
+1. **Generic-module coverage (Figure 4)** — `target_complementarity.py`: on-target (neurite outgrowth) vs liability (apoptosis / ER stress) vs housekeeping pathways, computed per pair. The shipped `outputs/per_pair/` metrics are the pre-computed batch over all pairs.
+2. **Synergy-feature comparison (Figure 8)** — `synergy_features.py`: Jaccard overlap, combined target-set size, individual potency, and tumor expression correlation, synergistic vs non-synergistic pairs.
+3. **NB-specific modules (Figure 9)** — `nb_specific_analysis.py`: coverage of adrenergic (ADRN) / mesenchymal (MES) / MYCN-target / retinoid-response signatures (van Groningen et al., Wei et al. `WEI_MYCN_TARGETS_WITH_E_BOX`, GO:BP `GOBP_RESPONSE_TO_RETINOIC_ACID`).
 
-Computes incremental pathway coverage and target complementarity using TargetScan v7.2 predictions. Three analyses:
+`batch_analysis.py` and `compare_databases.py` provide the parallel miRTarBase (experimentally-validated target) comparison.
 
-1. **Generic-module coverage (Figure 4)** — `target_complementarity.py` + `batch_analysis.py`. On-target (neurite outgrowth) vs liability (e.g., apoptosis) vs housekeeping pathways.
-2. **NB-specific modules (Figure 8)** — `nb_specific_analysis.py`. Coverage of adrenergic/mesenchymal/MYCN/retinoid signatures from van Groningen et al., Wei et al., and GO:BP retinoid response.
-3. **Synergy-feature comparison (Figure 7)** — `synergy_features.py`. Jaccard, combined target set size, individual potency, and tumor expression correlation, comparing synergistic vs non-synergistic pairs.
+**miR-34b-5p handling (matches the published figures).** miR-34b-5p is absent from the conserved-default TargetScan v7.2 predictions; because it shares its seed family (AGGCAGU) with miR-449b-5p, the shipped target-space outputs assign it that partner's conserved target set (see the manuscript Methods, "Systematic feature comparison"). miR-450b-5p and miR-2110, which also lack conserved-default predictions, carry no target set. To regenerate the outputs from a fresh TargetScan download, apply the same seed-family assignment before running the scripts below.
 
 ```bash
-# Single pair
+# Per-pair target-space coverage (Figure 4) — single-pair example
 python 03_target_analysis/target_complementarity.py \
   --mode predicted \
   --targetscan_tsv 03_target_analysis/external/targetscan72_hsa.tsv \
   --mirA hsa-miR-124-3p --mirB hsa-miR-363-3p \
-  --outdir output_example
+  --outdir example_out
 
-# All 31 pairs
-python 03_target_analysis/batch_analysis.py \
-  --pairs_csv 03_target_analysis/synergistic_pairs.csv \
-  --targetscan_tsv 03_target_analysis/external/targetscan72_hsa.tsv \
+# NB-specific module coverage (Figure 9)
+python 03_target_analysis/nb_specific_analysis.py \
+  --pairs-csv 03_target_analysis/synergistic_pairs.csv \
+  --targetscan-tsv 03_target_analysis/external/targetscan72_hsa.tsv \
+  --sig-dir 03_target_analysis/external/nb_signatures \
   --outdir 03_target_analysis/outputs
-
-# Statistics
-python 03_target_analysis/statistical_tests.py 03_target_analysis/outputs
 ```
 
-### 04_survival — Patient Survival
+### 04_survival — patient survival
 
-Kaplan-Meier and Cox proportional hazards analyses stratifying 96 neuroblastoma patients by coordinated miRNA expression. Source: GSE155945 (Misiak et al., 2021). For each synergistic pair, patients are tertile-split into "both high", "mixed", and "both low" groups. Cox models adjust for MYCN amplification with age stratification; the time-split sensitivity table tests the proportional hazards assumption per pair.
+Kaplan-Meier and Cox proportional-hazards analyses of 96 neuroblastoma patients (GSE155945; Misiak et al., 2021), stratified by coordinated miRNA expression. For each pair, patients are grouped by the number of the two miRNAs expressed above the cohort median (0, 1, or 2 "high"). Cox models adjust for MYCN amplification with age stratification; the time-split table tests the proportional-hazards assumption per pair. Survival figures cover the **six** dose-response pairs. Penalized (Firth-like) Cox estimation is used where the "both high" group has zero events (e.g., miR-137-3p + miR-450b-5p).
 
-Penalized (Firth-like) Cox estimation is used for `miR-137-3p + miR-450b-5p`, where the "both high" group has zero events.
-
-## External Data (not included)
+## External data (not included)
 
 | Resource | Source | Place at |
 |---|---|---|
-| Raw Incucyte NeuroTrack imaging (~152 MB) | Available upon request | needed only by `01_screen/screen_analysis.py` |
-| Raw IncuCyte dose-response plates | Available upon request | needed only by `02_dose_response/process_dose_response.py` |
+| Raw Incucyte NeuroTrack imaging (~152 MB) | available on request | needed only by `01_screen/01_load_plates.py` |
+| Raw IncuCyte dose-response plates | available on request | needed only by `02_dose_response/process_dose_response.py` |
 | GSE155945 raw miRNA + clinical data | [GSE155945](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155945) | derived CSVs already ship in `04_survival/data/` |
 | TargetScan v7.2 (human predictions, 4.1 MB) | [targetscan.org](https://www.targetscan.org/) | `03_target_analysis/external/targetscan72_hsa.tsv` |
-| miRTarBase MTI table (375 MB) | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | `03_target_analysis/external/mirtarbase_mti.csv` (needed for `compare_databases.py` only) |
+| miRTarBase MTI table | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | `03_target_analysis/external/` (needed for `compare_databases.py` only) |
 
-External databases (TargetScan, miRTarBase) are not redistributed here — fetch them from their canonical sources to keep licensing and provenance clean. The `03_target_analysis/external/nb_signatures/` folder, by contrast, ships the project-curated gene-set inputs derived from the cited papers (van Groningen et al., Wei et al., GO:BP).
+TargetScan and miRTarBase are not redistributed here — fetch them from their canonical sources to keep licensing and provenance clean. The `03_target_analysis/external/nb_signatures/` folder ships the project-curated gene-set inputs derived from the cited papers (van Groningen et al., Wei et al., GO:BP).
 
 ## Requirements
 
@@ -173,13 +168,13 @@ scipy >= 1.11
 matplotlib >= 3.9
 seaborn >= 0.13
 lifelines >= 0.27      # 04_survival/ only
-adjustText >= 0.8      # volcano_plot.py only
-requests >= 2.28       # ontology lookups in 03_target_analysis/
+adjustText >= 0.8      # 01_screen/volcano_analysis.py only
+requests >= 2.28       # ontology lookups in 03_target_analysis/ontology_venn.py
 ```
 
 ## Provenance
 
-This repository is populated from the project tree by `POPULATE.sh`. Script filenames in the project carry `_v14` / `_v15` version suffixes (the project's never-overwrite versioning scheme); those suffixes are dropped here because the Zenodo-archived release is itself a fixed version. CSV filenames are likewise renamed from their project-internal forms (e.g., `NL_allcombinations_vs_HSA.csv` → `nl_hsa_scores.csv`); the populator script patches the shipped `read_csv` calls to match.
+This repository is populated from the private project tree by `POPULATE.sh`. Project scripts are descriptor-named (the project's never-overwrite versioning keeps version suffixes on *outputs*, not script names); the shipped figures correspond to the manuscript's v18 figure set. Some processed-data CSVs are renamed from their project-internal forms (e.g., `NL_allcombinations_vs_HSA.csv` → `nl_hsa_scores.csv`); `POPULATE.sh` patches the shipped `read_csv` paths to match.
 
 ## License
 
