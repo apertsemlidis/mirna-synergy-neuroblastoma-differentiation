@@ -206,7 +206,6 @@ for panel_label, pair_short, mirna_pair in PAIRS:
 
     outname = f"km_3group_{pair_short}.png"
     plt.savefig(outname, dpi=300, bbox_inches="tight")
-    plt.savefig(outname.replace(".png", ".svg"), bbox_inches="tight")
     plt.close()
     print(
         f"Panel {panel_label} ({pair_short}): {title}  |  "

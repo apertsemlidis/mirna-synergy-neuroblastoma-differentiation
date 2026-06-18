@@ -21,7 +21,7 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 ## Repository structure
 
 ```
-├── 01_screen/                         # Primary combinatorial screen (Figures 3, 5)
+├── 01_screen/                         # Primary combinatorial screen (Figures 3, 5, 6; Additional file 4)
 │   ├── 01_load_plates.py              # Load raw Incucyte plates → normalized table (needs raw data)
 │   ├── 02_compute_heatmaps.py         # 44×44 HSA + absolute heatmap tables (Figure 3)
 │   ├── 03_compute_superhits.py        # Superhit calls (NL + CBCA significance gates)
@@ -34,18 +34,19 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 │   ├── nl_volcano_stats.csv           # Per-combination volcano statistics (Figure 5A)
 │   ├── mirna_family_info.csv          # miRNA family annotations (same-family pair filtering)
 │   ├── superhits.csv                  # Superhits passing NL + CBCA gates
+│   ├── candidate_disposition_all_946.csv  # Full 946-combination disposition (Additional file 4 data; 34 hits typeset)
 │   └── heatmap_data/                  # 96–126 h time-window matrices (Figure 3)
 │
-├── 02_dose_response/                  # Dose-response time course (Figure 6)
+├── 02_dose_response/                  # Dose-response validation (Figure 7: HSA synergy surfaces)
 │   ├── process_dose_response.py       # Raw plate exports → SynergyFinder-format CSVs (needs raw data)
-│   └── output/                        # Processed time-course curves (PNG/SVG), combined CSVs, synergy reports
+│   └── output/                        # Processed dose-response matrices, combined CSVs, synergy reports
 │
-├── 03_target_analysis/                # Target-space complementarity (Figures 4, 8, 9)
+├── 03_target_analysis/                # Target-space complementarity (Figures 4, 9, 10)
 │   ├── target_complementarity.py      # Per-pair module coverage & complementarity (Figure 4)
 │   ├── batch_analysis.py              # miRTarBase (validated-target) batch over the pair set
 │   ├── statistical_tests.py           # Reinforcement-vs-dilution statistics
-│   ├── synergy_features.py            # Synergistic vs non-synergistic feature comparison (Figure 8)
-│   ├── nb_specific_analysis.py        # ADRN/MES/MYCN/retinoid module coverage (Figure 9)
+│   ├── synergy_features.py            # Synergistic vs non-synergistic feature comparison (Figure 9)
+│   ├── nb_specific_analysis.py        # ADRN/MES/MYCN/retinoid module coverage (Figure 10)
 │   ├── compare_databases.py           # TargetScan vs miRTarBase comparison
 │   ├── ontology_venn.py               # Pathway-overlap Venn diagrams (supplementary)
 │   ├── synergistic_pairs.csv          # 31 synergistic miRNA pairs (master input)
@@ -53,13 +54,13 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 │   └── outputs/                       # Pre-computed metrics consumed by the figures
 │       ├── pairs_summary.csv          # Per-pair incremental coverage summary
 │       ├── per_pair/                  # Per-pair module metrics + term lists (Figure 4; 20 pairs)
-│       ├── all_pairs_nb_metrics.csv   # NB-specific incremental coverage (Figure 9)
-│       ├── nb_specific_stats.csv      # NB-module Mann-Whitney statistics (Figure 9)
-│       ├── all_features.csv           # Synergy-feature comparison data (Figure 8)
-│       └── synergy_features_stats.csv # Synergy-feature statistics (Figure 8)
+│       ├── all_pairs_nb_metrics.csv   # NB-specific incremental coverage (Figure 10)
+│       ├── nb_specific_stats.csv      # NB-module Mann-Whitney statistics (Figure 10)
+│       ├── all_features.csv           # Synergy-feature comparison data (Figure 9)
+│       └── synergy_features_stats.csv # Synergy-feature statistics (Figure 9)
 │
-├── 04_survival/                       # Patient survival (Figure 7, Additional files 1–3)
-│   ├── km_3group.py                   # 3-group KM curves, per pair (Figure 7)
+├── 04_survival/                       # Patient survival (Figure 8, Additional files 1–3)
+│   ├── km_3group.py                   # 3-group KM curves, per pair (Figure 8)
 │   ├── km_3group_screen.py            # Sweep all 31 pairs
 │   ├── km_mycn_stratified.py          # MYCN-amplified / non-amplified KM (Additional file 3)
 │   ├── km_mycn_stratified_screen.py   # Sweep all 31 pairs, MYCN-stratified
@@ -92,13 +93,15 @@ Each figure ships as a static `figures/figure_N.{pdf,png}`. The table below list
 | Figure 3 (NL + CBCA heatmaps) | `01_screen/02_compute_heatmaps.py`, `03_compute_superhits.py` | `01_screen/heatmap_data/`, `superhits.csv` |
 | Figure 4 (target complementarity) | `03_target_analysis/target_complementarity.py` + `batch_analysis.py` | `03_target_analysis/outputs/per_pair/` |
 | Figure 5 (volcano + NL/CBCA correlation) | `01_screen/volcano_analysis.py` | `01_screen/{nl_hsa_scores,cbca_scores,nl_volcano_stats,mirna_family_info}.csv` |
-| Figure 6 (dose-response time course) | `02_dose_response/process_dose_response.py` | `02_dose_response/output/` |
-| Figure 7 (3-group KM survival) | `04_survival/km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
-| Figure 8 (synergy features) | `03_target_analysis/synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
-| Figure 9 (NB-specific module coverage) | `03_target_analysis/nb_specific_analysis.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
+| Figure 6 (screen NL/CBCA time course) | screen time-course composite (not shipped) | `01_screen/` screen data |
+| Figure 7 (dose-response HSA synergy surfaces) | `02_dose_response/` (SynergyFinder 3.0; HSA surfaces) | `02_dose_response/output/` |
+| Figure 8 (3-group KM survival) | `04_survival/km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
+| Figure 9 (synergy features) | `03_target_analysis/synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
+| Figure 10 (NB-specific module coverage) | `03_target_analysis/nb_specific_analysis.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
 | Additional file 1 (time-split Cox table) | `04_survival/cox_time_split.py` | `04_survival/data/` |
 | Additional file 2 (combined Cox forest) | `04_survival/cox_forest_combined.py` | `04_survival/data/` |
 | Additional file 3 (MYCN-stratified KM) | `04_survival/km_mycn_stratified.py` | `04_survival/data/` |
+| Additional file 4 (candidate-disposition table) | screen dual-phenotype filtering | `01_screen/candidate_disposition_all_946.csv` (full 946; 34 dual-positive hits typeset) |
 
 Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assembled outside this codebase.
 
@@ -110,18 +113,19 @@ Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assemble
 
 - `01_load_plates.py` → `02_compute_heatmaps.py` → `03_compute_superhits.py` is the screen-processing pipeline (split from the original monolith). Step 1 needs the raw Incucyte NeuroTrack data (≈152 MB; available on request); steps 2–3 produce the shipped `heatmap_data/` and `superhits.csv`.
 - `volcano_analysis.py` produces the Figure 5A dual-phenotype volcano and emits `nl_volcano_stats.csv` (Fisher's combined test + BH correction).
+- `candidate_disposition_all_946.csv` is the full disposition of all 946 screened combinations (screen metrics, dual-positive status, dose-response selection + outcome); the 34 dual-positive hits form the typeset **Additional file 4**. The screen-based NL/CBCA time courses for the six dose-response pairs underlie **Figure 6**.
 
 ### 02_dose_response — dose-response validation
 
-Dose-response interaction modeling (SynergyFinder 3.0) and live-cell time courses for the six validated synergistic pairs. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the time-course curves there underlie **Figure 6**. Raw plate data is not included.
+Dose-response interaction modeling (SynergyFinder 3.0) for the six selected pairs across a 5×5 dose matrix. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the per-cell HSA synergy surfaces derived from these matrices are **Figure 7** (only the two miR-124-3p pairs reach significant HSA synergy). Raw plate data is not included.
 
 ### 03_target_analysis — target-space complementarity
 
 Incremental pathway coverage and target complementarity from TargetScan v7.2 predictions, across three analyses:
 
 1. **Generic-module coverage (Figure 4)** — `target_complementarity.py`: on-target (neurite outgrowth) vs liability (apoptosis / ER stress) vs housekeeping pathways, computed per pair. The shipped `outputs/per_pair/` metrics are the pre-computed batch over all pairs.
-2. **Synergy-feature comparison (Figure 8)** — `synergy_features.py`: Jaccard overlap, combined target-set size, individual potency, and tumor expression correlation, synergistic vs non-synergistic pairs.
-3. **NB-specific modules (Figure 9)** — `nb_specific_analysis.py`: coverage of adrenergic (ADRN) / mesenchymal (MES) / MYCN-target / retinoid-response signatures (van Groningen et al., Wei et al. `WEI_MYCN_TARGETS_WITH_E_BOX`, GO:BP `GOBP_RESPONSE_TO_RETINOIC_ACID`).
+2. **Synergy-feature comparison (Figure 9)** — `synergy_features.py`: Jaccard overlap, combined target-set size, individual potency, and tumor expression correlation, synergistic vs non-synergistic pairs.
+3. **NB-specific modules (Figure 10)** — `nb_specific_analysis.py`: coverage of adrenergic (ADRN) / mesenchymal (MES) / MYCN-target / retinoid-response signatures (van Groningen et al., Wei et al. `WEI_MYCN_TARGETS_WITH_E_BOX`, GO:BP `GOBP_RESPONSE_TO_RETINOIC_ACID`).
 
 `batch_analysis.py` and `compare_databases.py` provide the parallel miRTarBase (experimentally-validated target) comparison.
 
@@ -135,7 +139,7 @@ python 03_target_analysis/target_complementarity.py \
   --mirA hsa-miR-124-3p --mirB hsa-miR-363-3p \
   --outdir example_out
 
-# NB-specific module coverage (Figure 9)
+# NB-specific module coverage (Figure 10)
 python 03_target_analysis/nb_specific_analysis.py \
   --pairs-csv 03_target_analysis/synergistic_pairs.csv \
   --targetscan-tsv 03_target_analysis/external/targetscan72_hsa.tsv \

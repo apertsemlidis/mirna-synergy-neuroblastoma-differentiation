@@ -15,9 +15,10 @@
 #   - Public repo strips version suffixes — the GitHub release tag
 #     (v1.0.0 etc.) carries the snapshot identity.
 #
-# Updated for v16 (2026-05-24): Path 4 refactor; six-pair dose-response
-# master set; analysis scripts emit *_stats_v16.csv; figure composites
-# excluded; static figures (Fig 1-9 + Add files 1-3) shipped as PDF/PNG.
+# Updated for v19 (2026-06-17): Figure 6 = screen time-course, Figure 7 = dose-response
+# HSA synergy surfaces (new), old Figures 7/8/9 renumbered to 8/9/10; Additional file 4
+# (candidate-disposition table) added + full 946-combination master shipped as data.
+# Static figures (Fig 1-10 + Add files 1-4) shipped as PDF/PNG; figure composites excluded.
 
 set -u
 
@@ -86,6 +87,9 @@ cpy "$PAPER/data/screen/ABS_dfs/cbca_slice(96, 126, None).csv"     "$REPO/01_scr
 cpy "$PAPER/data/screen/HSAhits_p05_cytostatic.csv"                "$REPO/01_screen/superhits.csv"
 # Stats CSV from analysis (v16)
 cpy "$PAPER/data/screen/nl_volcano_stats.csv"                      "$REPO/01_screen/nl_volcano_stats.csv"
+# Full 946-combination candidate-disposition table (the Zenodo data file behind Additional file 4;
+# the 34 dual-positive hits are the typeset supplement, derived from this master)
+cpy "$PAPER/analysis/decision_artifacts/candidate_disposition_table_946.csv" "$REPO/01_screen/candidate_disposition_all_946.csv"
 
 # ---------------------------------------------------------------------
 # 02_dose_response — Dose-response validation
@@ -151,44 +155,52 @@ cpy "$PAPER/survival/cox_time_split/cox_time_split_table.csv"       "$REPO/04_su
 # figures — Static deliverables only (PDF / PNG); composites NOT shipped
 # ---------------------------------------------------------------------
 echo "[figures]"
-# Figures 1-9. Prefer the latest available vintage per figure: v18 → v17 → v16 → v15.
-# (As of the v18 submission set, all figure files are labelled v18; the older
-# vintages in the fallback chain are kept for backward compatibility. Older
-# vintages live in figures/archive/ after the figure-tier cleanup.)
-for n in 1 2 3 4 5 6 7 8 9; do
-    for v in v18 v17 v16 v15; do
+# Figures 1-10. Prefer the latest available vintage per figure: v19 → v18 → v17 → v16 → v15.
+# (v19 submission set: Figure 6 = screen time-course, Figure 7 = dose-response HSA surfaces (new),
+# old Figures 7/8/9 renumbered to 8/9/10. All v19 figure files are labelled v19; older vintages in
+# the fallback chain are kept for backward compatibility and live in figures/archive/.)
+for n in 1 2 3 4 5 6 7 8 9 10; do
+    for v in v19 v18 v17 v16 v15; do
         if [ -f "$PAPER/figures/Figure $n $v.pdf" ]; then
             cpy "$PAPER/figures/Figure $n $v.pdf"   "$REPO/figures/figure_$n.pdf"
             break
         fi
     done
-    for v in v18 v17 v16 v15; do
+    for v in v19 v18 v17 v16 v15; do
         if [ -f "$PAPER/figures/Figure $n $v.png" ]; then
             cpy "$PAPER/figures/Figure $n $v.png"   "$REPO/figures/figure_$n.png"
             break
         fi
     done
 done
-# Additional files 1-3
-for v in v18 v16 v15; do
+# Additional file 1 (survival Cox table, CSV)
+for v in v19 v18 v16 v15; do
     if [ -f "$PAPER/figures/Additional file 1 $v.csv" ]; then
         cpy "$PAPER/figures/Additional file 1 $v.csv" "$REPO/figures/additional_file_1.csv"
         break
     fi
 done
+# Additional files 2-3 (figures)
 for n in 2 3; do
-    for v in v18 v16 v15; do
+    for v in v19 v18 v16 v15; do
         if [ -f "$PAPER/figures/Additional file $n $v.pdf" ]; then
             cpy "$PAPER/figures/Additional file $n $v.pdf" "$REPO/figures/additional_file_$n.pdf"
             break
         fi
     done
-    for v in v18 v16 v15; do
+    for v in v19 v18 v16 v15; do
         if [ -f "$PAPER/figures/Additional file $n $v.png" ]; then
             cpy "$PAPER/figures/Additional file $n $v.png" "$REPO/figures/additional_file_$n.png"
             break
         fi
     done
+done
+# Additional file 4 (candidate-disposition table, CSV; new in v19)
+for v in v19 v18; do
+    if [ -f "$PAPER/figures/Additional file 4 $v.csv" ]; then
+        cpy "$PAPER/figures/Additional file 4 $v.csv" "$REPO/figures/additional_file_4.csv"
+        break
+    fi
 done
 
 # ---------------------------------------------------------------------
@@ -260,10 +272,10 @@ echo "  2. Confirm processed-data filenames in scripts match the public-facing"
 echo "     copies after the rename pass."
 echo "  3. Verify survival scripts find their CSVs at the expected relative path."
 echo "  4. Spot-check the static figures shipped under figures/ — selection prefers"
-echo "     v18 → v17 → v16 → v15 per figure (the v18 submission set ships all figures at v18)."
+echo "     v19 → v18 → v17 → v16 → v15 per figure (the v19 submission set ships all figures at v19)."
 echo "  5. Update the Zenodo DOI placeholder in README.md once minted."
 echo ""
 echo "Then initialize / update + publish:"
 echo "  cd $REPO"
-echo "  git add -A && git commit -m 'v18 release for JBS submission'"
+echo "  git add -A && git commit -m 'v19 release for JBS submission'"
 echo "  # Push, tag v1.0.0, enable Zenodo integration"

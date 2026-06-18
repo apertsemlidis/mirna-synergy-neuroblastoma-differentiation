@@ -239,11 +239,9 @@ def main():
 
     fig.tight_layout()
     fig.savefig(outdir / 'neurite length CI volcano plot DUAL.png', dpi=300, bbox_inches='tight')
-    fig.savefig(outdir / 'neurite length CI volcano plot DUAL.svg', bbox_inches='tight')
     plt.close()
 
     print(f"\n✓ Created: {outdir / 'neurite length CI volcano plot DUAL.png'}")
-    print(f"✓ Created: {outdir / 'neurite length CI volcano plot DUAL.svg'}")
 
     # ---- Summary statistics with corrected analysis ----
     same_fam_all = {k:v for k,v in volcano_data.items() if v[0]}

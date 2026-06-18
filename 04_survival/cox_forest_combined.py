@@ -214,7 +214,6 @@ ax.annotate(
 )
 
 plt.savefig("cox_forest_combined.png", dpi=300, bbox_inches="tight")
-plt.savefig("cox_forest_combined.svg", bbox_inches="tight")
 plt.savefig("cox_forest_combined.pdf", bbox_inches="tight")
 plt.close()
 print("\nSaved: cox_forest_combined.{png,svg,pdf}")

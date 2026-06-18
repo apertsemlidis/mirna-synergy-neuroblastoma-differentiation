@@ -297,7 +297,6 @@ for pair_label, mirna_pair in PAIRS:
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     outname = f"km_mycn_stratified_{pair_label}.png"
     plt.savefig(outname, dpi=300, bbox_inches="tight")
-    plt.savefig(outname.replace(".png", ".svg"), bbox_inches="tight")
     plt.close()
     print(f"  Saved: {outname}")
 

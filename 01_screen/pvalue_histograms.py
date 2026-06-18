@@ -142,11 +142,9 @@ def main():
     outdir = Path("QC_images")
     outdir.mkdir(exist_ok=True)
     fig.savefig(outdir / "pvalue_histograms_NL_CBCA.png", dpi=300, bbox_inches="tight")
-    fig.savefig(outdir / "pvalue_histograms_NL_CBCA.svg", bbox_inches="tight")
     plt.close()
 
     print(f"\n✓ Created: {outdir / 'pvalue_histograms_NL_CBCA.png'}")
-    print(f"✓ Created: {outdir / 'pvalue_histograms_NL_CBCA.svg'}")
 
 
 if __name__ == "__main__":
