@@ -10,13 +10,13 @@ Code and processed data for:
 
 ## What this repository ships
 
-This is a **reproducibility archive**, not a turnkey figure-rendering pipeline. For each analysis domain it provides:
+This is a **reproducibility archive**. For each analysis domain it provides:
 
 - the **analysis scripts** and their **pre-computed output CSVs**,
 - the **processed input data** (the raw instrument data is too large / licensed separately — see *External Data*),
 - the **final manuscript figures** as static `figures/figure_N.{pdf,png}` and `figures/additional_file_N.*`.
 
-The figure-assembly composites (the scripts that lay out panels into the publication figures) are **not** included; they live in the private project tree. To reproduce a figure's underlying numbers, re-run the listed analysis script — it regenerates the CSVs under its `outputs/` (or domain) folder, which match the shipped copies. The static figure files are the exact images in the paper.
+The scripts that lay out panels into the publication figures are **not** included. To reproduce a figure's underlying numbers, re-run the listed analysis script. It regenerates the CSVs under its `outputs/` (or domain) folder, which match the shipped copies. The static figure files are the exact images in the paper.
 
 ## Repository structure
 
@@ -110,19 +110,19 @@ Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assemble
 
 ## What each subdirectory does
 
-### 01_screen — combinatorial miRNA screen
+### 01\_screen — combinatorial miRNA screen
 
 946 pairwise miRNA combinations were screened in SK-N-BE(2)-C neuroblastoma cells for synergistic effects on neurite length (NL) and growth arrest (cell-body cluster area, CBCA). HSA (Highest Single Agent) scores identify combinations exceeding the strongest single agent; dual-phenotype filtering requires both NL synergy (p < 0.05, CI < 1) and CBCA improvement over ATRA (p < 0.05).
 
-- `01_load_plates.py` → `02_compute_heatmaps.py` → `03_compute_superhits.py` is the screen-processing pipeline (split from the original monolith). Step 1 needs the raw Incucyte NeuroTrack data (≈152 MB; available on request); steps 2–3 produce the shipped `heatmap_data/` and `superhits.csv`.
+- `01_load_plates.py` → `02_compute_heatmaps.py` → `03_compute_superhits.py` is the screen-processing pipeline. Step 1 needs the raw Incucyte NeuroTrack data (≈152 MB; available on request); steps 2–3 produce the shipped `heatmap_data/` and `superhits.csv`.
 - `volcano_analysis.py` produces the Figure 5A dual-phenotype volcano and emits `nl_volcano_stats.csv` (Fisher's combined test + BH correction).
 - `candidate_disposition_all_946.csv` is the full disposition of all 946 screened combinations (screen metrics, dual-positive status, dose-response selection + outcome); the 34 dual-positive hits form the typeset **Additional file 4**. The screen-based NL/CBCA time courses for the six dose-response pairs underlie **Figure 6**.
 
-### 02_dose_response — dose-response validation
+### 02\_dose\_response — dose-response validation
 
 Dose-response interaction modeling (SynergyFinder 3.0) for the six selected pairs across a 5×5 dose matrix. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the per-cell HSA synergy surfaces derived from these matrices are **Figure 7**. `dose_response_hsa.py` computes the interior-mean HSA synergy and a replicate bootstrap 95% CI / p-value per pair from `dose_response_maxnlnorm.csv`, writing `dose_response_hsa_stats.csv` — only the two miR-124-3p pairs reach significant HSA synergy (124+363: 17.3 [13.1–21.2]; 124+34b: 7.6 [3.4–11.9]; both p < 0.001). HSA is used because it is scale-free and reproducible across implementations, whereas the Bliss/ZIP scalars are tool- and normalization-dependent. Raw plate data is not included.
 
-### 03_target_analysis — target-space complementarity
+### 03\_target\_analysis — target-space complementarity
 
 Incremental pathway coverage and target complementarity from TargetScan v7.2 predictions, across three analyses:
 
@@ -132,7 +132,7 @@ Incremental pathway coverage and target complementarity from TargetScan v7.2 pre
 
 `batch_analysis.py` and `compare_databases.py` provide the parallel miRTarBase (experimentally-validated target) comparison.
 
-**miR-34b-5p handling (matches the published figures).** miR-34b-5p is absent from the conserved-default TargetScan v7.2 predictions; because it shares its seed family (AGGCAGU) with miR-449b-5p, the shipped target-space outputs assign it that partner's conserved target set (see the manuscript Methods, "Systematic feature comparison"). miR-450b-5p and miR-2110, which also lack conserved-default predictions, carry no target set. To regenerate the outputs from a fresh TargetScan download, apply the same seed-family assignment before running the scripts below.
+**miR-34b-5p handling.** miR-34b-5p is absent from the conserved-default TargetScan v7.2 predictions; because it shares its seed family (AGGCAGU) with miR-449b-5p, the shipped target-space outputs assign it that partner's conserved target set (see the manuscript Methods, "Systematic feature comparison"). miR-450b-5p and miR-2110, which also lack conserved-default predictions, carry no target set. To regenerate the outputs from a fresh TargetScan download, apply the same seed-family assignment before running the scripts below.
 
 ```bash
 # Per-pair target-space coverage (Figure 4) — single-pair example
@@ -150,21 +150,21 @@ python 03_target_analysis/nb_specific_analysis.py \
   --outdir 03_target_analysis/outputs
 ```
 
-### 04_survival — patient survival
+### 04\_survival — patient survival
 
 Kaplan-Meier and Cox proportional-hazards analyses of 96 neuroblastoma patients (GSE155945; Misiak et al., 2021), stratified by coordinated miRNA expression. For each pair, patients are grouped by the number of the two miRNAs expressed above the cohort median (0, 1, or 2 "high"). Cox models adjust for MYCN amplification with age stratification; the time-split table tests the proportional-hazards assumption per pair. Survival figures cover the **six** dose-response pairs. Penalized (Firth-like) Cox estimation is used where the "both high" group has zero events (e.g., miR-137-3p + miR-450b-5p).
 
 ## External data (not included)
 
-| Resource | Source | Place at |
+| Resource | Source | Notes |
 |---|---|---|
 | Raw Incucyte NeuroTrack imaging (~152 MB) | available on request | needed only by `01_screen/01_load_plates.py` |
 | Raw IncuCyte dose-response plates | available on request | needed only by `02_dose_response/process_dose_response.py` |
 | GSE155945 raw miRNA + clinical data | [GSE155945](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155945) | derived CSVs already ship in `04_survival/data/` |
 | TargetScan v7.2 (human predictions, 4.1 MB) | [targetscan.org](https://www.targetscan.org/) | `03_target_analysis/external/targetscan72_hsa.tsv` |
-| miRTarBase MTI table | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | `03_target_analysis/external/` (needed for `compare_databases.py` only) |
+| miRTarBase MTI table | [mirtarbase.cuhk.edu.cn](https://mirtarbase.cuhk.edu.cn/) | needed only by `03_target_analysis/external/compare_databases.py` |
 
-TargetScan and miRTarBase are not redistributed here — fetch them from their canonical sources to keep licensing and provenance clean. The `03_target_analysis/external/nb_signatures/` folder ships the project-curated gene-set inputs derived from the cited papers (van Groningen et al., Wei et al., GO:BP).
+TargetScan and miRTarBase are not redistributed here, but can be fetched from their canonical sources. The `03_target_analysis/external/nb_signatures/` folder ships the project-curated gene-set inputs derived from the cited papers (van Groningen et al., Wei et al., GO:BP).
 
 ## Requirements
 
@@ -175,14 +175,14 @@ numpy >= 1.26
 scipy >= 1.11
 matplotlib >= 3.9
 seaborn >= 0.13
-lifelines >= 0.27      # 04_survival/ only
+lifelines >= 0.27      # 04_survival only
 adjustText >= 0.8      # 01_screen/volcano_analysis.py only
 requests >= 2.28       # ontology lookups in 03_target_analysis/ontology_venn.py
 ```
 
 ## Provenance
 
-This repository is a curated export of the analysis scripts, processed data, and static figures behind the manuscript. The shipped figures correspond to the manuscript's final figure set (Figures 1–10, Additional files 1–4). Some processed-data CSVs are renamed from their analysis-internal forms for readability (e.g., `NL_allcombinations_vs_HSA.csv` → `nl_hsa_scores.csv`); the shipped scripts' `read_csv` paths point to these public names.
+This repository is a curated export of the analysis scripts, processed data, and static figures behind the manuscript. The shipped figures correspond to the manuscript's final figure set (Figures 1–10, Additional files 1–4). 
 
 ## License
 
