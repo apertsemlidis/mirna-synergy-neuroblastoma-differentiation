@@ -32,3 +32,4 @@ Incucyte_raw_data*/
 
 # Runtime QC output from qqplots.py / pvalue_histograms.py
 QC_images/
+POPULATE.sh

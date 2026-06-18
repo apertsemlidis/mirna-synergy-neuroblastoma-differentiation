@@ -76,11 +76,11 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 │   └── data/                          # GSE155945-derived patient data (expression + survival)
 │
 ├── figures/                           # Final manuscript figures (static)
-│   ├── figure_1.{pdf,png} … figure_9.{pdf,png}
+│   ├── figure_1.{pdf,png} … figure_10.{pdf,png}
 │   ├── additional_file_1.csv          # Time-split Cox HR table
-│   └── additional_file_2.{pdf,png}, additional_file_3.{pdf,png}
+│   ├── additional_file_2.{pdf,png}, additional_file_3.{pdf,png}
+│   └── additional_file_4.csv          # Candidate-disposition table (34 dual-positive hits)
 │
-├── POPULATE.sh                        # Populates this repo from the private project tree
 ├── LICENSE
 └── README.md
 ```
@@ -182,7 +182,7 @@ requests >= 2.28       # ontology lookups in 03_target_analysis/ontology_venn.py
 
 ## Provenance
 
-This repository is populated from the private project tree by `POPULATE.sh`. Project scripts are descriptor-named (the project's never-overwrite versioning keeps version suffixes on *outputs*, not script names); the shipped figures correspond to the manuscript's v18 figure set. Some processed-data CSVs are renamed from their project-internal forms (e.g., `NL_allcombinations_vs_HSA.csv` → `nl_hsa_scores.csv`); `POPULATE.sh` patches the shipped `read_csv` paths to match.
+This repository is a curated export of the analysis scripts, processed data, and static figures behind the manuscript. The shipped figures correspond to the manuscript's final figure set (Figures 1–10, Additional files 1–4). Some processed-data CSVs are renamed from their analysis-internal forms for readability (e.g., `NL_allcombinations_vs_HSA.csv` → `nl_hsa_scores.csv`); the shipped scripts' `read_csv` paths point to these public names.
 
 ## License
 
