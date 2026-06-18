@@ -1,6 +1,6 @@
 # miRNA Synergy in Neuroblastoma Differentiation
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20753188.svg)](https://doi.org/10.5281/zenodo.20753188)
 
 Code and processed data for:
 
