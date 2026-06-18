@@ -39,6 +39,9 @@ The figure-assembly composites (the scripts that lay out panels into the publica
 │
 ├── 02_dose_response/                  # Dose-response validation (Figure 7: HSA synergy surfaces)
 │   ├── process_dose_response.py       # Raw plate exports → SynergyFinder-format CSVs (needs raw data)
+│   ├── dose_response_hsa.py           # HSA synergy + replicate bootstrap (Figure 7 statistics)
+│   ├── dose_response_maxnlnorm.csv    # Per-plate-max-normalized dose matrices (HSA input)
+│   ├── dose_response_hsa_stats.csv    # Per-pair HSA synergy, 95% CI, p (2/6 pairs significant)
 │   └── output/                        # Processed dose-response matrices, combined CSVs, synergy reports
 │
 ├── 03_target_analysis/                # Target-space complementarity (Figures 4, 9, 10)
@@ -94,14 +97,14 @@ Each figure ships as a static `figures/figure_N.{pdf,png}`. The table below list
 | Figure 4 (target complementarity) | `03_target_analysis/target_complementarity.py` + `batch_analysis.py` | `03_target_analysis/outputs/per_pair/` |
 | Figure 5 (volcano + NL/CBCA correlation) | `01_screen/volcano_analysis.py` | `01_screen/{nl_hsa_scores,cbca_scores,nl_volcano_stats,mirna_family_info}.csv` |
 | Figure 6 (screen NL/CBCA time course) | screen time-course composite (not shipped) | `01_screen/` screen data |
-| Figure 7 (dose-response HSA synergy surfaces) | `02_dose_response/` (SynergyFinder 3.0; HSA surfaces) | `02_dose_response/output/` |
+| Figure 7 (dose-response HSA synergy surfaces) | `02_dose_response/dose_response_hsa.py` (HSA + bootstrap) | `02_dose_response/dose_response_maxnlnorm.csv`, `output/` |
 | Figure 8 (3-group KM survival) | `04_survival/km_3group.py` | `04_survival/data/{miRNA_expression_data,survival_data}.csv` |
 | Figure 9 (synergy features) | `03_target_analysis/synergy_features.py` | `03_target_analysis/outputs/all_features.csv` |
 | Figure 10 (NB-specific module coverage) | `03_target_analysis/nb_specific_analysis.py` | `03_target_analysis/outputs/all_pairs_nb_metrics.csv` |
 | Additional file 1 (time-split Cox table) | `04_survival/cox_time_split.py` | `04_survival/data/` |
 | Additional file 2 (combined Cox forest) | `04_survival/cox_forest_combined.py` | `04_survival/data/` |
 | Additional file 3 (MYCN-stratified KM) | `04_survival/km_mycn_stratified.py` | `04_survival/data/` |
-| Additional file 4 (candidate-disposition table) | screen dual-phenotype filtering | `01_screen/candidate_disposition_all_946.csv` (full 946; 34 dual-positive hits typeset) |
+| Additional file 4 (candidate-disposition table) | `01_screen/build_additional_file_4.py` | `01_screen/candidate_disposition_all_946.csv` (full 946; 34 dual-positive hits typeset) |
 
 Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assembled outside this codebase.
 
@@ -117,7 +120,7 @@ Figures 1 and 2 are a vector schematic and a microscopy/plate-map panel assemble
 
 ### 02_dose_response — dose-response validation
 
-Dose-response interaction modeling (SynergyFinder 3.0) for the six selected pairs across a 5×5 dose matrix. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the per-cell HSA synergy surfaces derived from these matrices are **Figure 7** (only the two miR-124-3p pairs reach significant HSA synergy). Raw plate data is not included.
+Dose-response interaction modeling (SynergyFinder 3.0) for the six selected pairs across a 5×5 dose matrix. `process_dose_response.py` converts raw IncuCyte exports into the SynergyFinder-format CSVs in `output/`; the per-cell HSA synergy surfaces derived from these matrices are **Figure 7**. `dose_response_hsa.py` computes the interior-mean HSA synergy and a replicate bootstrap 95% CI / p-value per pair from `dose_response_maxnlnorm.csv`, writing `dose_response_hsa_stats.csv` — only the two miR-124-3p pairs reach significant HSA synergy (124+363: 17.3 [13.1–21.2]; 124+34b: 7.6 [3.4–11.9]; both p < 0.001). HSA is used because it is scale-free and reproducible across implementations, whereas the Bliss/ZIP scalars are tool- and normalization-dependent. Raw plate data is not included.
 
 ### 03_target_analysis — target-space complementarity
 

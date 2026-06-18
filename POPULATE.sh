@@ -90,6 +90,8 @@ cpy "$PAPER/data/screen/nl_volcano_stats.csv"                      "$REPO/01_scr
 # Full 946-combination candidate-disposition table (the Zenodo data file behind Additional file 4;
 # the 34 dual-positive hits are the typeset supplement, derived from this master)
 cpy "$PAPER/analysis/decision_artifacts/candidate_disposition_table_946.csv" "$REPO/01_screen/candidate_disposition_all_946.csv"
+# Builder for Additional file 4 (filters the 946 master to the 34 dual-positive hits + dose-response outcome)
+cpy "$PAPER/scripts/util/build_disposition_additional_file.py"     "$REPO/01_screen/build_additional_file_4.py"
 
 # ---------------------------------------------------------------------
 # 02_dose_response — Dose-response validation
@@ -98,6 +100,11 @@ echo "[02_dose_response]"
 cpy "$PAPER/scripts/dose_response/process_dose_response.py"        "$REPO/02_dose_response/process_dose_response.py"
 # Raw plate data omitted (large); processed outputs included
 cpy "$PAPER/data/dose_response/output"                              "$REPO/02_dose_response/output"
+# Figure 7: dose-response HSA synergy + replicate bootstrap (the p<0.001 validation of the two
+# miR-124-3p pairs). Script + its per-plate-max-normalized input matrix + the stats it emits.
+cpy "$PAPER/scripts/dose_response/dose_response_hsa.py"            "$REPO/02_dose_response/dose_response_hsa.py"
+cpy "$PAPER/data/dose_response/dose_response_maxnlnorm.csv"         "$REPO/02_dose_response/dose_response_maxnlnorm.csv"
+cpy "$PAPER/data/dose_response/dose_response_hsa_stats.csv"         "$REPO/02_dose_response/dose_response_hsa_stats.csv"
 
 # ---------------------------------------------------------------------
 # 03_target_analysis — Target-space complementarity (Figures 4, 8, 9)

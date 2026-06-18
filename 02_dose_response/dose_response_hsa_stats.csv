@@ -1,0 +1,7 @@
+pair,hsa_synergy,ci_low,ci_high,p_value,hsa_synergistic
+hsa-miR-124-3p + hsa-miR-363-3p,17.26,13.05,21.23,0.0,True
+hsa-miR-124-3p + hsa-miR-34b-5p,7.63,3.4,11.91,0.0002,True
+hsa-miR-137 + hsa-miR-450b-3p,0.91,-5.28,7.38,0.3908,False
+hsa-miR-137 + hsa-miR-449b-5p,-0.23,-9.11,8.08,0.5202,False
+hsa-miR-19b-3p + hsa-miR-2110,-5.46,-11.39,-0.06,0.9768,False
+hsa-miR-137 + hsa-miR-17-5p,-6.49,-15.93,0.68,0.9616,False
